@@ -1,0 +1,39 @@
+workflows:
+  ios-native-quick-start:
+    name: iOS Native
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: 'Stoneheld'
+    environment:
+      ios_signing:
+        # Manual signing: certificate and provisioning profile are uploaded by hand
+        # in Codemagic UI (Team settings > codemagic.yaml settings > Code signing
+        # identities) under the reference name below — NOT fetched automatically.
+        provisioning_profiles:
+          - Stoneheld
+        certificates:
+          - Stoneheld
+      vars:
+        BUNDLE_ID: "com.ahmetsen.stoneheld"
+        XCODE_WORKSPACE: "Stoneheld.xcodeproj"
+        XCODE_SCHEME: "Stoneheld"
+        APP_STORE_APPLE_ID: 6803636881
+      xcode: latest
+    scripts:
+      - name: Set up provisioning profiles settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
