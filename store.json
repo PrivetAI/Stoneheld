@@ -33,7 +33,8 @@
     "unrestrictedWebAccess": false,
     "healthOrWellnessTopics": false,
     "parentalControls": false,
-    "ageAssurance": false
+    "ageAssurance": false,
+    "ageRatingOverrideV2": "SIXTEEN_PLUS"
   },
   "review_notes": "Stoneheld is a quiet single-player balancing game about stacking stones into a cairn.\n\n- No account, login, or registration is required, so no demo credentials are needed.\n- Everything runs offline and single-player; stones, cairns and records are kept on-device.\n- No in-app purchases, no ads, no user-generated content, no social features.\n\nHow to use (for quick evaluation):\n1. Open the Stack tab and choose \"Begin a Zen Cairn\". A short three-card explainer runs on first launch.\n2. The next stone hovers above the pile. Drag left or right to aim it; the dashed outline underneath shows exactly where it will land, and the ring control rotates it a degree at a time.\n3. Tap Set Stone to drop it. The stone falls straight down and settles onto whatever is beneath it, rocking into place if it lands on a single point.\n4. The bar at the top is the balance margin: it measures how far the combined centre of mass of everything above a contact sits from the edge of that contact. Green is comfortable, amber is close, and past zero the cairn topples.\n5. Keep stacking to grow the tower. Ending a run saves the cairn to the Gallery, where it is redrawn with its height and stone count.\n6. Trials offers forty set challenges, Daily Cairn gives the same stones to everyone on a given date, and Windward adds a steady sideways force.\n\nNothing here needs a connection, and stones unlock purely by playing."
 }
