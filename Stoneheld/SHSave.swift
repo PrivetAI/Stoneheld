@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - Modes
 
-enum CBMode: Int, CaseIterable {
+enum SHMode: Int, CaseIterable {
     case zen = 0, trials = 1, daily = 2, windward = 3
 
     var title: String {
@@ -27,7 +27,7 @@ enum CBMode: Int, CaseIterable {
 
 // MARK: - Saved cairn snapshot (compact vector record, re-drawn on Canvas)
 
-struct CBCairnSnapshot: Codable, Identifiable {
+struct SHCairnSnapshot: Codable, Identifiable {
     var id: String
     var name: String
     var savedAt: Double            // time interval since 1970
@@ -42,7 +42,7 @@ struct CBCairnSnapshot: Codable, Identifiable {
 
     var stoneCount: Int { min(kindIDs.count, min(xs.count, min(ys.count, rots.count))) }
     var date: Date { Date(timeIntervalSince1970: savedAt) }
-    var modeEnum: CBMode { CBMode(rawValue: mode) ?? .zen }
+    var modeEnum: SHMode { SHMode(rawValue: mode) ?? .zen }
 
     init(id: String = UUID().uuidString, name: String, savedAt: Double, mode: Int,
          kindIDs: [Int], xs: [Double], ys: [Double], rots: [Double],
@@ -74,7 +74,7 @@ struct CBCairnSnapshot: Codable, Identifiable {
 // Every property is decoded with decodeIfPresent + a default, so adding a field
 // in a later version can never throw and reset the player's progress.
 
-struct CBSaveData: Codable {
+struct SHSaveData: Codable {
     var version: Int = 1
 
     // settings
@@ -109,7 +109,7 @@ struct CBSaveData: Codable {
     var dailyLastDay: String = ""
 
     // gallery
-    var gallery: [CBCairnSnapshot] = []
+    var gallery: [SHCairnSnapshot] = []
 
     init() {}
 
@@ -156,7 +156,7 @@ struct CBSaveData: Codable {
         dailyStreak = i(.dailyStreak, 0)
         dailyLastDay = s(.dailyLastDay, "")
 
-        gallery = (try? c.decodeIfPresent([CBCairnSnapshot].self, forKey: .gallery)) ?? []
+        gallery = (try? c.decodeIfPresent([SHCairnSnapshot].self, forKey: .gallery)) ?? []
 
         normalize()
     }
@@ -164,7 +164,7 @@ struct CBSaveData: Codable {
     mutating func normalize() {
         if shorePlaced.count < 4 { shorePlaced += Array(repeating: 0, count: 4 - shorePlaced.count) }
         if shorePlaced.count > 4 { shorePlaced = Array(shorePlaced.prefix(4)) }
-        let n = CBTrialData.all.count
+        let n = SHTrialData.all.count
         if trialStars.count < n { trialStars += Array(repeating: 0, count: n - trialStars.count) }
         if trialStars.count > n { trialStars = Array(trialStars.prefix(n)) }
         if trialBest.count < n { trialBest += Array(repeating: 0, count: n - trialBest.count) }
@@ -175,27 +175,27 @@ struct CBSaveData: Codable {
             dailyBestValues = Array(dailyBestValues.prefix(m))
         }
         if rotationStep != 1 && rotationStep != 5 { rotationStep = 1 }
-        if gallery.count > CBStore.galleryLimit {
-            gallery = Array(gallery.suffix(CBStore.galleryLimit))
+        if gallery.count > SHStore.galleryLimit {
+            gallery = Array(gallery.suffix(SHStore.galleryLimit))
         }
     }
 }
 
 // MARK: - Store
 
-final class CBStore: ObservableObject {
-    static let shared = CBStore()
+final class SHStore: ObservableObject {
+    static let shared = SHStore()
     static let galleryLimit = 60
-    private let key = "cairnbalance.save.v1"
+    private let key = "stoneheld.save.v1"
 
-    @Published private(set) var data: CBSaveData
+    @Published private(set) var data: SHSaveData
 
     private init() {
         if let raw = UserDefaults.standard.data(forKey: key),
-           let decoded = try? JSONDecoder().decode(CBSaveData.self, from: raw) {
+           let decoded = try? JSONDecoder().decode(SHSaveData.self, from: raw) {
             data = decoded
         } else {
-            var fresh = CBSaveData()
+            var fresh = SHSaveData()
             fresh.normalize()
             data = fresh
         }
@@ -207,7 +207,7 @@ final class CBStore: ObservableObject {
         }
     }
 
-    func mutate(_ block: (inout CBSaveData) -> Void) {
+    func mutate(_ block: (inout SHSaveData) -> Void) {
         var copy = data
         block(&copy)
         copy.normalize()
@@ -234,7 +234,7 @@ final class CBStore: ObservableObject {
     }
 
     func isUnlocked(_ kindID: Int) -> Bool {
-        switch CBCatalog.kind(kindID).unlock {
+        switch SHCatalog.kind(kindID).unlock {
         case .start: return true
         case .placed(let n): return data.totalStonesPlaced >= n
         case .stars(let n): return totalStars >= n
@@ -242,13 +242,13 @@ final class CBStore: ObservableObject {
     }
 
     var unlockedIDs: [Int] {
-        (0..<CBCatalog.count).filter { isUnlocked($0) }
+        (0..<SHCatalog.count).filter { isUnlocked($0) }
     }
 
     var unlockedCount: Int { unlockedIDs.count }
 
     func unlockText(_ kindID: Int) -> String {
-        switch CBCatalog.kind(kindID).unlock {
+        switch SHCatalog.kind(kindID).unlock {
         case .start: return "Available from the start"
         case .placed(let n): return "Seat \(n) stones (\(min(data.totalStonesPlaced, n))/\(n))"
         case .stars(let n): return "Earn \(n) trial stars (\(min(totalStars, n))/\(n))"
@@ -256,7 +256,7 @@ final class CBStore: ObservableObject {
     }
 
     func shoreUnlocked(_ shore: Int) -> Int {
-        CBShores.all[max(0, min(3, shore))].range.filter { isUnlocked($0) }.count
+        SHShores.all[max(0, min(3, shore))].range.filter { isUnlocked($0) }.count
     }
 
     func dailyBest(_ dayKey: String) -> Double? {
@@ -274,12 +274,12 @@ final class CBStore: ObservableObject {
     func recordPlacement(kindID: Int) {
         mutate { d in
             d.totalStonesPlaced += 1
-            let s = CBShores.shore(of: kindID).index
+            let s = SHShores.shore(of: kindID).index
             if s >= 0 && s < d.shorePlaced.count { d.shorePlaced[s] += 1 }
         }
     }
 
-    func recordRunEnd(mode: CBMode, stones: Int, height: Double) {
+    func recordRunEnd(mode: SHMode, stones: Int, height: Double) {
         mutate { d in
             d.totalRuns += 1
             if height.isFinite && height > d.tallestCairn { d.tallestCairn = height }
@@ -326,8 +326,8 @@ final class CBStore: ObservableObject {
             // streak: consecutive calendar days, computed against the previous key
             if d.dailyLastDay == dayKey { return }
             let cal = Calendar(identifier: .gregorian)
-            if let prev = CBFormat.dayKeyFormatter.date(from: d.dailyLastDay),
-               let today = CBFormat.dayKeyFormatter.date(from: dayKey),
+            if let prev = SHFormat.dayKeyFormatter.date(from: d.dailyLastDay),
+               let today = SHFormat.dayKeyFormatter.date(from: dayKey),
                let diff = cal.dateComponents([.day], from: prev, to: today).day,
                diff == 1 {
                 d.dailyStreak += 1
@@ -338,11 +338,11 @@ final class CBStore: ObservableObject {
         }
     }
 
-    func addSnapshot(_ snap: CBCairnSnapshot) {
+    func addSnapshot(_ snap: SHCairnSnapshot) {
         mutate { d in
             d.gallery.append(snap)
-            if d.gallery.count > CBStore.galleryLimit {
-                d.gallery.removeFirst(d.gallery.count - CBStore.galleryLimit)
+            if d.gallery.count > SHStore.galleryLimit {
+                d.gallery.removeFirst(d.gallery.count - SHStore.galleryLimit)
             }
         }
     }
@@ -363,7 +363,7 @@ final class CBStore: ObservableObject {
     func resetProgress() {
         mutate { d in
             let keepOnboarding = d.onboardingDone
-            var fresh = CBSaveData()
+            var fresh = SHSaveData()
             fresh.onboardingDone = keepOnboarding
             fresh.showPlumb = d.showPlumb
             fresh.showSupport = d.showSupport

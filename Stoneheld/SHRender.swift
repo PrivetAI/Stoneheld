@@ -6,10 +6,10 @@ import SwiftUI
 // thumbnails, the collection browser. Textures are stroked in the stone's own
 // local frame so they rotate with it.
 
-enum CBRender {
+enum SHRender {
 
     /// Builds a screen-space path from a stone's local outline.
-    static func path(_ kind: CBStoneKind, map: (CGPoint) -> CGPoint) -> Path {
+    static func path(_ kind: SHStoneKind, map: (CGPoint) -> CGPoint) -> Path {
         var p = Path()
         let pts = kind.poly.points
         guard pts.count >= 3 else { return p }
@@ -20,7 +20,7 @@ enum CBRender {
     }
 
     static func drawStone(_ ctx: inout GraphicsContext,
-                          kind: CBStoneKind,
+                          kind: SHStoneKind,
                           map: (CGPoint) -> CGPoint,
                           scale: CGFloat,
                           opacity: Double = 1.0,
@@ -28,7 +28,7 @@ enum CBRender {
                           outline: Color? = nil) {
 
         let body = path(kind, map: map)
-        let tint = CBTheme.stoneTints[min(max(0, kind.tint), CBTheme.stoneTints.count - 1)]
+        let tint = SHTheme.stoneTints[min(max(0, kind.tint), SHTheme.stoneTints.count - 1)]
 
         if ghost {
             ctx.stroke(body, with: .color(tint.opacity(0.55 * opacity)),
@@ -58,16 +58,16 @@ enum CBRender {
         shade.move(to: map(CGPoint(x: b.minX, y: b.minY * 0.40)))
         shade.addQuadCurve(to: map(CGPoint(x: b.maxX, y: b.minY * 0.35)),
                            control: map(CGPoint(x: 0, y: b.minY * 1.08)))
-        lightCtx.stroke(shade, with: .color(CBTheme.ink.opacity(0.14 * opacity)),
+        lightCtx.stroke(shade, with: .color(SHTheme.ink.opacity(0.14 * opacity)),
                         lineWidth: max(1, 6 * scale))
 
         // Rim
-        ctx.stroke(body, with: .color((outline ?? CBTheme.ink.opacity(0.35)).opacity(opacity)),
+        ctx.stroke(body, with: .color((outline ?? SHTheme.ink.opacity(0.35)).opacity(opacity)),
                    lineWidth: max(0.6, 1.1 * scale))
     }
 
     private static func drawTexture(_ ctx: inout GraphicsContext,
-                                    kind: CBStoneKind,
+                                    kind: SHStoneKind,
                                     map: (CGPoint) -> CGPoint,
                                     scale: CGFloat,
                                     opacity: Double) {
@@ -76,7 +76,7 @@ enum CBRender {
         let h = b.maxY - b.minY
         guard w > 0, h > 0 else { return }
         let light = Color.white.opacity(0.20 * opacity)
-        let dark = CBTheme.ink.opacity(0.16 * opacity)
+        let dark = SHTheme.ink.opacity(0.16 * opacity)
 
         switch kind.texture {
         case .speckle:
@@ -151,12 +151,12 @@ enum CBRender {
     /// Draws the plinth the cairn stands on.
     static func drawBase(_ ctx: inout GraphicsContext, map: (CGPoint) -> CGPoint, scale: CGFloat) {
         var p = Path()
-        let pts = CBCatalog.base.points
+        let pts = SHCatalog.base.points
         guard pts.count >= 3 else { return }
         p.move(to: map(pts[0]))
         for i in 1..<pts.count { p.addLine(to: map(pts[i])) }
         p.closeSubpath()
-        ctx.fill(p, with: .color(CBTheme.slate.opacity(0.88)))
+        ctx.fill(p, with: .color(SHTheme.slate.opacity(0.88)))
         var sub = ctx
         sub.clip(to: p)
         for i in 0..<5 {
@@ -167,7 +167,7 @@ enum CBRender {
                               control: map(CGPoint(x: 0, y: y + 8)))
             sub.stroke(line, with: .color(Color.white.opacity(0.07)), lineWidth: max(0.6, 1.4 * scale))
         }
-        ctx.stroke(p, with: .color(CBTheme.ink.opacity(0.45)), lineWidth: max(0.6, 1.2 * scale))
+        ctx.stroke(p, with: .color(SHTheme.ink.opacity(0.45)), lineWidth: max(0.6, 1.2 * scale))
     }
 
     // MARK: - Fitted cairn drawing (gallery + previews)
@@ -193,10 +193,10 @@ enum CBRender {
         anchorX = cbSafeDivide(anchorX, Double(n))
 
         if withBase {
-            expand(cbWorldPoints(CBCatalog.base, position: CGPoint(x: anchorX, y: 0), rotation: 0))
+            expand(cbWorldPoints(SHCatalog.base, position: CGPoint(x: anchorX, y: 0), rotation: 0))
         }
         for i in 0..<n {
-            let k = CBCatalog.kind(kindIDs[i])
+            let k = SHCatalog.kind(kindIDs[i])
             expand(cbWorldPoints(k.poly, position: CGPoint(x: xs[i], y: ys[i]), rotation: rots[i]))
         }
         guard maxX > minX, maxY > minY else { return }
@@ -218,7 +218,7 @@ enum CBRender {
             }, scale: scale)
         }
         for i in 0..<n {
-            let k = CBCatalog.kind(kindIDs[i])
+            let k = SHCatalog.kind(kindIDs[i])
             let pos = CGPoint(x: xs[i], y: ys[i])
             let rot = rots[i]
             let c = cos(rot), sn = sin(rot)
@@ -233,14 +233,14 @@ enum CBRender {
 
 // MARK: - Single stone portrait (Stones tab, trial rosters)
 
-struct CBStonePortrait: View {
+struct SHStonePortrait: View {
     let kindID: Int
     var boxSize: CGSize
     var locked: Bool = false
 
     var body: some View {
         Canvas { ctx, _ in
-            let kind = CBCatalog.kind(kindID)
+            let kind = SHCatalog.kind(kindID)
             let rect = CGRect(x: 4, y: 4, width: boxSize.width - 8, height: boxSize.height - 8)
             let w = kind.poly.maxX - kind.poly.minX
             let h = kind.poly.maxY - kind.poly.minY
@@ -253,7 +253,7 @@ struct CBStonePortrait: View {
             if locked {
                 context.opacity = 0.30
             }
-            CBRender.drawStone(&context, kind: kind, map: { local in
+            SHRender.drawStone(&context, kind: kind, map: { local in
                 CGPoint(x: rect.midX + (CGFloat(local.x) - CGFloat(cx)) * s,
                         y: rect.midY - (CGFloat(local.y) - CGFloat(cy)) * s)
             }, scale: s)

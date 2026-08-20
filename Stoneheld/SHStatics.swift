@@ -8,7 +8,7 @@ import Foundation
 // become cheap array lookups, and — crucially — they are deterministic, so the
 // live preview shows exactly the seat the release will produce.
 
-struct CBHeightField {
+struct SHHeightField {
     private(set) var tops: [Double]      // -inf where nothing is below
     private(set) var owners: [Int]       // -1 nothing, -2 the base, else placement index
     let width: Double
@@ -67,7 +67,7 @@ struct CBHeightField {
 // That is the whole "physics": no restitution, no bounce, no iteration to a
 // fixed point. Two passes and it is seated.
 
-struct CBSettleResult {
+struct SHSettleResult {
     var position: CGPoint
     var rotation: Double
     var contactL: Double
@@ -83,7 +83,7 @@ struct CBSettleResult {
     var seatWidth: Double { Swift.max(0, contactR - contactL) }
 }
 
-enum CBStatics {
+enum SHStatics {
 
     static let contactEpsilon: Double = 0.9
     static let penetrationTolerance: Double = 0.7
@@ -93,7 +93,7 @@ enum CBStatics {
     static let seatWidthForTipping: Double = 9.0
 
     /// Vertical gap between a stone's underside and the field. Positive = floating.
-    private static func minimumGap(_ pts: [CGPoint], _ field: CBHeightField) -> (gap: Double, anyContact: Bool) {
+    private static func minimumGap(_ pts: [CGPoint], _ field: SHHeightField) -> (gap: Double, anyContact: Bool) {
         let b = cbBounds(pts)
         let lo = Swift.max(0, Int(b.minX.rounded(.down)))
         let hi = Swift.min(field.sampleCount - 1, Int(b.maxX.rounded(.up)))
@@ -114,7 +114,7 @@ enum CBStatics {
     }
 
     /// Sampled x positions where the stone is touching the field.
-    private static func contactSpan(_ pts: [CGPoint], _ field: CBHeightField, epsilon: Double)
+    private static func contactSpan(_ pts: [CGPoint], _ field: SHHeightField, epsilon: Double)
         -> (l: Double, r: Double, y: Double, owner: Int)? {
         let b = cbBounds(pts)
         let lo = Swift.max(0, Int(b.minX.rounded(.down)))
@@ -145,10 +145,10 @@ enum CBStatics {
     }
 
     /// Drop + tip. `startPos` is where the player is holding the stone.
-    static func settle(kind: CBStoneKind,
+    static func settle(kind: SHStoneKind,
                        startPos: CGPoint,
                        rotation: Double,
-                       field: CBHeightField) -> CBSettleResult {
+                       field: SHHeightField) -> SHSettleResult {
 
         var pos = startPos
         var rot = rotation
@@ -157,19 +157,19 @@ enum CBStatics {
         // 1. straight fall
         let probe = minimumGap(pts, field)
         guard probe.anyContact else {
-            return CBSettleResult(position: pos, rotation: rot,
+            return SHSettleResult(position: pos, rotation: rot,
                                   contactL: 0, contactR: 0, contactY: 0, supported: false)
         }
         pos.y -= CGFloat(probe.gap)
         pts = cbWorldPoints(kind.poly, position: pos, rotation: rot)
 
         guard var seat = contactSpan(pts, field, epsilon: contactEpsilon) else {
-            return CBSettleResult(position: pos, rotation: rot,
+            return SHSettleResult(position: pos, rotation: rot,
                                   contactL: 0, contactR: 0, contactY: 0, supported: false)
         }
 
         // 2. tip about the contact point until a second point lands
-        if seat.r - seat.l < CBStatics.seatWidthForTipping {
+        if seat.r - seat.l < SHStatics.seatWidthForTipping {
             let pivot = CGPoint(x: (seat.l + seat.r) * 0.5, y: seat.y)
             var steps = 0
             let maxSteps = Int(maxTipAngle / tipStep)
@@ -211,7 +211,7 @@ enum CBStatics {
             }
         }
 
-        return CBSettleResult(position: pos, rotation: rot,
+        return SHSettleResult(position: pos, rotation: rot,
                               contactL: seat.l, contactR: seat.r, contactY: seat.y,
                               supported: true, topOwner: seat.owner)
     }
@@ -224,7 +224,7 @@ enum CBStatics {
 // that projection lands inside the support interval. Wind is folded in as a
 // lateral acceleration acting at the group's centre of mass height.
 
-struct CBLevel: Identifiable {
+struct SHLevel: Identifiable {
     let id: Int                  // placement index of the stone sitting on this contact
     let xL: Double
     let xR: Double
@@ -238,7 +238,7 @@ struct CBLevel: Identifiable {
     var seatWidth: Double { Swift.max(0, xR - xL) }
 }
 
-enum CBStability {
+enum SHStability {
 
     /// margin = min(comX - xL, xR - comX) / (0.5 * (xR - xL)) clamped to [-1, 1].
     static func margin(comX: Double, xL: Double, xR: Double) -> Double {
@@ -250,11 +250,11 @@ enum CBStability {
         return cbClamp(raw, -1, 1)
     }
 
-    static func evaluate(placed: [CBPlacedStone],
-                         catalog: [CBStoneKind],
-                         windAccel: Double) -> [CBLevel] {
+    static func evaluate(placed: [SHPlacedStone],
+                         catalog: [SHStoneKind],
+                         windAccel: Double) -> [SHLevel] {
         guard !placed.isEmpty else { return [] }
-        var levels: [CBLevel] = []
+        var levels: [SHLevel] = []
         levels.reserveCapacity(placed.count)
 
         // walk from the top down, accumulating mass and moments
@@ -290,7 +290,7 @@ enum CBStability {
             let effX = comX + (shift.isFinite ? shift : 0)
 
             let m = margin(comX: effX, xL: placed[i].contactL, xR: placed[i].contactR)
-            levels.append(CBLevel(id: i,
+            levels.append(SHLevel(id: i,
                                   xL: placed[i].contactL,
                                   xR: placed[i].contactR,
                                   y: placed[i].contactY,
@@ -304,7 +304,7 @@ enum CBStability {
     }
 
     /// Overall stack stability = the weakest level.
-    static func weakest(_ levels: [CBLevel]) -> CBLevel? {
+    static func weakest(_ levels: [SHLevel]) -> SHLevel? {
         levels.min(by: { $0.margin < $1.margin })
     }
 }
@@ -315,7 +315,7 @@ enum CBStability {
 // edge. Angular acceleration comes from the unbalanced torque with the group
 // treated as a point mass at its COM: alpha = g * (comX - pivotX) / r^2.
 
-struct CBToppleState {
+struct SHToppleState {
     var fromIndex: Int
     var pivot: CGPoint
     var angle: Double = 0
@@ -327,17 +327,17 @@ struct CBToppleState {
     var finished: Bool { fade <= 0.01 }
 }
 
-enum CBTopple {
+enum SHTopple {
     static let gravity: Double = 900.0    // points / s^2
 
-    static func begin(level: CBLevel) -> CBToppleState {
+    static func begin(level: SHLevel) -> SHToppleState {
         let goesRight = level.effectiveComX > (level.xL + level.xR) * 0.5
         let pivotX = goesRight ? level.xR : level.xL
-        return CBToppleState(fromIndex: level.id,
+        return SHToppleState(fromIndex: level.id,
                              pivot: CGPoint(x: pivotX, y: level.y))
     }
 
-    static func step(_ s: inout CBToppleState, comX: Double, comY: Double, dt: Double) {
+    static func step(_ s: inout SHToppleState, comX: Double, comY: Double, dt: Double) {
         let rx = comX - Double(s.pivot.x)
         let ry = Swift.max(6.0, comY - Double(s.pivot.y))
         let r2 = Swift.max(64.0, rx * rx + ry * ry)
@@ -360,7 +360,7 @@ enum CBTopple {
 // Deterministic sine stack — same schedule every run of a given seed, no RNG at
 // draw time, so the gauge and the statics can never disagree.
 
-enum CBWind {
+enum SHWind {
     static func accel(t: Double, seed: UInt64, strength: Double) -> Double {
         guard strength > 0 else { return 0 }
         let phase = Double(seed % 997) * 0.0063
@@ -375,7 +375,7 @@ enum CBWind {
 
 // MARK: - Deterministic seeded generator (FNV-1a + xorshift)
 
-struct CBSeededRandom {
+struct SHSeededRandom {
     private var state: UInt64
 
     init(seed: UInt64) {

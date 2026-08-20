@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct CBRootView: View {
-    @ObservedObject var store = CBStore.shared
+struct SHRootView: View {
+    @ObservedObject var store = SHStore.shared
     @State private var tab = 0
-    @State private var session: CBSession?
+    @State private var session: SHSession?
 
     var body: some View {
         ZStack {
@@ -11,16 +11,16 @@ struct CBRootView: View {
                 Group {
                     switch tab {
                     case 0:
-                        NavigationView { CBStackView(session: $session) }
+                        NavigationView { SHStackView(session: $session) }
                             .navigationViewStyle(StackNavigationViewStyle())
                     case 1:
-                        NavigationView { CBGalleryView() }
+                        NavigationView { SHGalleryView() }
                             .navigationViewStyle(StackNavigationViewStyle())
                     case 2:
-                        NavigationView { CBStonesView() }
+                        NavigationView { SHStonesView() }
                             .navigationViewStyle(StackNavigationViewStyle())
                     default:
-                        NavigationView { CBSettingsView() }
+                        NavigationView { SHSettingsView() }
                             .navigationViewStyle(StackNavigationViewStyle())
                     }
                 }
@@ -31,30 +31,30 @@ struct CBRootView: View {
             .edgesIgnoringSafeArea(.bottom)
 
             if let s = session {
-                CBPlayView(session: s,
+                SHPlayView(session: s,
                            onExit: { session = nil },
                            onReplace: { next in session = next })
                     .id(s.id)
             }
 
             if !store.data.onboardingDone {
-                CBOnboardingView()
+                SHOnboardingView()
             }
         }
     }
 
     private var tabBar: some View {
         HStack(spacing: 0) {
-            tabButton(0, "Stack") { on in AnyView(CBIconCairn(size: 22, color: on ? CBTheme.slate : CBTheme.inkFaint)) }
-            tabButton(1, "Gallery") { on in AnyView(CBIconGallery(size: 21, color: on ? CBTheme.slate : CBTheme.inkFaint)) }
-            tabButton(2, "Stones") { on in AnyView(CBIconStone(size: 22, color: on ? CBTheme.slate : CBTheme.inkFaint)) }
-            tabButton(3, "Settings") { on in AnyView(CBIconSliders(size: 21, color: on ? CBTheme.slate : CBTheme.inkFaint)) }
+            tabButton(0, "Stack") { on in AnyView(SHIconCairn(size: 22, color: on ? SHTheme.slate : SHTheme.inkFaint)) }
+            tabButton(1, "Gallery") { on in AnyView(SHIconGallery(size: 21, color: on ? SHTheme.slate : SHTheme.inkFaint)) }
+            tabButton(2, "Stones") { on in AnyView(SHIconStone(size: 22, color: on ? SHTheme.slate : SHTheme.inkFaint)) }
+            tabButton(3, "Settings") { on in AnyView(SHIconSliders(size: 21, color: on ? SHTheme.slate : SHTheme.inkFaint)) }
         }
         .padding(.top, 8)
-        .padding(.bottom, max(6, CBSafe.bottom))
+        .padding(.bottom, max(6, SHSafe.bottom))
         .background(
-            CBTheme.card
-                .overlay(CBTheme.hairline.frame(height: 1), alignment: .top)
+            SHTheme.card
+                .overlay(SHTheme.hairline.frame(height: 1), alignment: .top)
                 .edgesIgnoringSafeArea(.bottom)
         )
     }
@@ -63,14 +63,14 @@ struct CBRootView: View {
                            _ icon: @escaping (Bool) -> AnyView) -> some View {
         Button(action: {
             tab = index
-            CBHaptics.tap(store.data.haptics)
+            SHHaptics.tap(store.data.haptics)
         }) {
             VStack(spacing: 3) {
                 icon(tab == index)
                     .frame(height: 24)
                 Text(label)
-                    .font(CBTheme.label(10, tab == index ? .semibold : .regular))
-                    .foregroundColor(tab == index ? CBTheme.slate : CBTheme.inkFaint)
+                    .font(SHTheme.label(10, tab == index ? .semibold : .regular))
+                    .foregroundColor(tab == index ? SHTheme.slate : SHTheme.inkFaint)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 2)

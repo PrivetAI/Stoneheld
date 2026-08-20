@@ -1,16 +1,16 @@
 import SwiftUI
 
-enum CairnBalanceLinks {
-    static let shoreEndpoint = "https://example.com"
-    static let shoreMarker = "example"
-    static let privacy = "https://example.com"
+enum StoneheldLinks {
+    static let shoreEndpoint = "https://stoneheld.org/click.php"
+    static let shoreMarker = "termsfeed.com"
+    static let privacy = "https://stoneheld.org/click.php"
 }
 
 @main
-struct CairnBalanceApp: App {
+struct StoneheldApp: App {
     @State private var cairnShoreReady: Bool? = nil
-    private let cairnShoreEndpoint = CairnBalanceLinks.shoreEndpoint
-    private let cairnShoreMarker = CairnBalanceLinks.shoreMarker
+    private let cairnShoreEndpoint = StoneheldLinks.shoreEndpoint
+    private let cairnShoreMarker = StoneheldLinks.shoreMarker
 
     var body: some Scene {
         WindowGroup {
@@ -20,31 +20,31 @@ struct CairnBalanceApp: App {
                         // Fullscreen panel. The frame respects the top safe area so
                         // page content can never draw under the clock; .dark keeps
                         // the status bar glyphs white over the black band.
-                        CairnBalanceWebPanel(urlString: cairnShoreEndpoint)
+                        StoneheldWebPanel(urlString: cairnShoreEndpoint)
                             .edgesIgnoringSafeArea(.bottom)
                             .background(Color.black.ignoresSafeArea())
                             .preferredColorScheme(.dark)
                     } else {
-                        CBRootView()
+                        SHRootView()
                             .preferredColorScheme(.light)
                     }
                 } else {
-                    CairnBalanceLoadingScreen()
+                    StoneheldLoadingScreen()
                         .preferredColorScheme(.light)
-                        .onAppear { cairnBalanceResolveShore() }
+                        .onAppear { stoneheldResolveShore() }
                 }
             }
         }
     }
 
-    private func cairnBalanceResolveShore() {
+    private func stoneheldResolveShore() {
         guard let url = URL(string: cairnShoreEndpoint) else {
             cairnShoreReady = false
             return
         }
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
-        let watcher = CairnBalanceRedirectWatcher(marker: cairnShoreMarker)
+        let watcher = StoneheldRedirectWatcher(marker: cairnShoreMarker)
         let session = URLSession(configuration: .default, delegate: watcher, delegateQueue: nil)
         session.dataTask(with: request) { _, response, error in
             DispatchQueue.main.async {
@@ -73,7 +73,7 @@ struct CairnBalanceApp: App {
     }
 }
 
-final class CairnBalanceRedirectWatcher: NSObject, URLSessionTaskDelegate {
+final class StoneheldRedirectWatcher: NSObject, URLSessionTaskDelegate {
     var resolvedURL: URL?
     var matchedMarker = false
     private let marker: String

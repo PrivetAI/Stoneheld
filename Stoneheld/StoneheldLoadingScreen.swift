@@ -1,17 +1,17 @@
 import SwiftUI
 
-struct CairnBalanceLoadingScreen: View {
+struct StoneheldLoadingScreen: View {
     @State private var settle: Double = 0
 
     var body: some View {
         ZStack {
-            CBBackground()
+            SHBackground()
             VStack(spacing: 22) {
                 Canvas { ctx, size in
                     var c = ctx
                     let rect = CGRect(x: size.width * 0.16, y: 0,
                                       width: size.width * 0.68, height: size.height)
-                    CBRender.drawCairn(&c,
+                    SHRender.drawCairn(&c,
                                        kindIDs: [9, 2, 20, 5, 33],
                                        xs: [0, 2, -5, 3, -1],
                                        ys: [16, 40, 74, 106, 144],
@@ -22,21 +22,21 @@ struct CairnBalanceLoadingScreen: View {
                 .opacity(0.35 + settle * 0.65)
 
                 VStack(spacing: 6) {
-                    Text("Cairn Balance")
-                        .font(CBTheme.displayBold(23))
-                        .foregroundColor(CBTheme.ink)
+                    Text("Stoneheld")
+                        .font(SHTheme.displayBold(23))
+                        .foregroundColor(SHTheme.ink)
                     Text("Finding the seat")
-                        .font(CBTheme.label(12, .regular))
-                        .foregroundColor(CBTheme.inkSoft)
+                        .font(SHTheme.label(12, .regular))
+                        .foregroundColor(SHTheme.inkSoft)
                 }
 
                 Capsule()
-                    .fill(CBTheme.paperDeep)
+                    .fill(SHTheme.paperDeep)
                     .frame(width: 120, height: 4)
                     .overlay(
                         GeometryReader { geo in
                             Capsule()
-                                .fill(CBTheme.seaglass)
+                                .fill(SHTheme.seaglass)
                                 .frame(width: geo.size.width * CGFloat(settle))
                         }
                     )

@@ -3,30 +3,30 @@ import Foundation
 
 // MARK: - The four shores
 
-struct CBShore {
+struct SHShore {
     let index: Int
     let name: String
     let blurb: String
     let range: ClosedRange<Int>
 }
 
-enum CBShores {
-    static let all: [CBShore] = [
-        CBShore(index: 0, name: "Pebble Cove",
+enum SHShores {
+    static let all: [SHShore] = [
+        SHShore(index: 0, name: "Pebble Cove",
                 blurb: "Small, round and forgiving. Wide bellies, gentle seats — the stones you learn on.",
                 range: 0...8),
-        CBShore(index: 1, name: "Slate Quarry",
+        SHShore(index: 1, name: "Slate Quarry",
                 blurb: "Flat and broad. Poor towers, superb platforms: a slate resets a wobbling cairn.",
                 range: 9...17),
-        CBShore(index: 2, name: "River Bend",
+        SHShore(index: 2, name: "River Bend",
                 blurb: "Water-smoothed ovals. Heavy for their size and they meet the stack on almost nothing.",
                 range: 18...26),
-        CBShore(index: 3, name: "Basalt Point",
+        SHShore(index: 3, name: "Basalt Point",
                 blurb: "Angular columns off the headland. Tall, dense and tippy — the last thing you place.",
                 range: 27...35)
     ]
 
-    static func shore(of kindID: Int) -> CBShore {
+    static func shore(of kindID: Int) -> SHShore {
         for s in all where s.range.contains(kindID) { return s }
         return all[0]
     }
@@ -38,7 +38,7 @@ enum CBShores {
 // silhouettes, flat quarry bottoms, rolled river bellies, tapered basalt spines.
 // Nothing here is a generated regular polygon.
 
-enum CBCatalog {
+enum SHCatalog {
 
     private static func pts(_ v: [Double]) -> [CGPoint] {
         var out: [CGPoint] = []
@@ -51,13 +51,13 @@ enum CBCatalog {
         return out
     }
 
-    static let stones: [CBStoneKind] = {
-        var list: [CBStoneKind] = []
+    static let stones: [SHStoneKind] = {
+        var list: [SHStoneKind] = []
 
         func add(_ name: String, _ shore: Int, _ v: [Double], _ density: Double,
-                 _ tint: Int, _ tex: CBTexture, _ unlock: CBUnlock, _ note: String) {
-            list.append(CBStoneKind(id: list.count, name: name, shore: shore,
-                                    poly: CBPolygon(pts(v)), density: density,
+                 _ tint: Int, _ tex: SHTexture, _ unlock: SHUnlock, _ note: String) {
+            list.append(SHStoneKind(id: list.count, name: name, shore: shore,
+                                    poly: SHPolygon(pts(v)), density: density,
                                     tint: tint, texture: tex, unlock: unlock, note: note))
         }
 
@@ -229,7 +229,7 @@ enum CBCatalog {
         return list
     }()
 
-    static func kind(_ id: Int) -> CBStoneKind {
+    static func kind(_ id: Int) -> SHStoneKind {
         if id >= 0 && id < stones.count { return stones[id] }
         return stones[0]
     }
@@ -238,7 +238,7 @@ enum CBCatalog {
 
     // The plinth the whole cairn stands on. Slightly domed so the first stone
     // has an honest, non-flat seat.
-    static let base: CBPolygon = CBPolygon(pts(
+    static let base: SHPolygon = SHPolygon(pts(
         [96, -4, 88, 3, 50, 7, 18, 8, -18, 8, -52, 6, -90, 2, -96, -6, -84, -46, 84, -46]
     ))
     static let baseTopY: Double = 8

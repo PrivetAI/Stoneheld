@@ -2,9 +2,9 @@ import SwiftUI
 
 // Every glyph in this app is drawn here. No SF Symbols, no emoji, no bitmaps.
 
-struct CBIconCairn: View {
+struct SHIconCairn: View {
     var size: CGFloat = 24
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -22,9 +22,9 @@ struct CBIconCairn: View {
     }
 }
 
-struct CBIconGallery: View {
+struct SHIconGallery: View {
     var size: CGFloat = 24
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -44,9 +44,9 @@ struct CBIconGallery: View {
     }
 }
 
-struct CBIconStone: View {
+struct SHIconStone: View {
     var size: CGFloat = 24
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -66,15 +66,15 @@ struct CBIconStone: View {
             band.move(to: CGPoint(x: w * 0.16, y: h * 0.46))
             band.addQuadCurve(to: CGPoint(x: w * 0.88, y: h * 0.38),
                               control: CGPoint(x: w * 0.52, y: h * 0.60))
-            ctx.stroke(band, with: .color(CBTheme.paper.opacity(0.55)), lineWidth: max(1, w * 0.06))
+            ctx.stroke(band, with: .color(SHTheme.paper.opacity(0.55)), lineWidth: max(1, w * 0.06))
         }
         .frame(width: size, height: size)
     }
 }
 
-struct CBIconSliders: View {
+struct SHIconSliders: View {
     var size: CGFloat = 24
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -94,10 +94,10 @@ struct CBIconSliders: View {
     }
 }
 
-struct CBIconStar: View {
+struct SHIconStar: View {
     var size: CGFloat = 14
     var filled: Bool = true
-    var color: Color = CBTheme.driftwood
+    var color: Color = SHTheme.driftwood
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -122,9 +122,9 @@ struct CBIconStar: View {
     }
 }
 
-struct CBIconLock: View {
+struct SHIconLock: View {
     var size: CGFloat = 16
-    var color: Color = CBTheme.inkFaint
+    var color: Color = SHTheme.inkFaint
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -140,9 +140,9 @@ struct CBIconLock: View {
     }
 }
 
-struct CBIconChevron: View {
+struct SHIconChevron: View {
     var size: CGFloat = 14
-    var color: Color = CBTheme.inkFaint
+    var color: Color = SHTheme.inkFaint
     var pointsLeft: Bool = false
     var body: some View {
         Canvas { ctx, s in
@@ -164,9 +164,9 @@ struct CBIconChevron: View {
     }
 }
 
-struct CBIconClose: View {
+struct SHIconClose: View {
     var size: CGFloat = 16
-    var color: Color = CBTheme.inkSoft
+    var color: Color = SHTheme.inkSoft
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -179,9 +179,9 @@ struct CBIconClose: View {
     }
 }
 
-struct CBIconCheck: View {
+struct SHIconCheck: View {
     var size: CGFloat = 16
-    var color: Color = CBTheme.moss
+    var color: Color = SHTheme.moss
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -196,9 +196,9 @@ struct CBIconCheck: View {
     }
 }
 
-struct CBIconTrash: View {
+struct SHIconTrash: View {
     var size: CGFloat = 16
-    var color: Color = CBTheme.rust
+    var color: Color = SHTheme.rust
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -223,9 +223,9 @@ struct CBIconTrash: View {
     }
 }
 
-struct CBIconStep: View {
+struct SHIconStep: View {
     var size: CGFloat = 18
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var plus: Bool = true
     var body: some View {
         Canvas { ctx, s in
@@ -242,9 +242,9 @@ struct CBIconStep: View {
 }
 
 /// The twist glyph inside the rotation ring.
-struct CBIconTwist: View {
+struct SHIconTwist: View {
     var size: CGFloat = 26
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -267,9 +267,9 @@ struct CBIconTwist: View {
 }
 
 /// A small plumb-bob mark used in onboarding and legends.
-struct CBIconPlumb: View {
+struct SHIconPlumb: View {
     var size: CGFloat = 18
-    var color: Color = CBTheme.seaglass
+    var color: Color = SHTheme.seaglass
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -289,9 +289,9 @@ struct CBIconPlumb: View {
 }
 
 /// Wind streak glyph for the Windward gauge.
-struct CBIconWind: View {
+struct SHIconWind: View {
     var size: CGFloat = 20
-    var color: Color = CBTheme.seaglass
+    var color: Color = SHTheme.seaglass
     var body: some View {
         Canvas { ctx, s in
             let w = s.width, h = s.height
@@ -311,14 +311,14 @@ struct CBIconWind: View {
 
 // MARK: - Star row
 
-struct CBStarRow: View {
+struct SHStarRow: View {
     let earned: Int
     var size: CGFloat = 12
-    var color: Color = CBTheme.driftwood
+    var color: Color = SHTheme.driftwood
     var body: some View {
         HStack(spacing: 2.5) {
             ForEach(0..<3, id: \.self) { i in
-                CBIconStar(size: size, filled: i < earned, color: color)
+                SHIconStar(size: size, filled: i < earned, color: color)
             }
         }
     }

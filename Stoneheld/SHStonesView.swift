@@ -1,29 +1,29 @@
 import SwiftUI
 
-private struct CBStoneRef: Identifiable {
+private struct SHStoneRef: Identifiable {
     let id: Int
 }
 
-struct CBStonesView: View {
-    @ObservedObject var store = CBStore.shared
-    @State private var selected: CBStoneRef?
+struct SHStonesView: View {
+    @ObservedObject var store = SHStore.shared
+    @State private var selected: SHStoneRef?
     @State private var shoreFilter: Int = -1
 
     var body: some View {
-        CBScreen(spacing: 12) {
-            CBScreenTitle(title: "Stones",
-                          subtitle: "\(store.unlockedCount) of \(CBCatalog.count) unlocked across four shores")
+        SHScreen(spacing: 12) {
+            SHScreenTitle(title: "Stones",
+                          subtitle: "\(store.unlockedCount) of \(SHCatalog.count) unlocked across four shores")
 
             filterRow
 
-            ForEach(CBShores.all, id: \.index) { shore in
+            ForEach(SHShores.all, id: \.index) { shore in
                 if shoreFilter == -1 || shoreFilter == shore.index {
                     shoreSection(shore)
                 }
             }
         }
         .sheet(item: $selected) { ref in
-            CBStoneDetailView(kindID: ref.id)
+            SHStoneDetailView(kindID: ref.id)
         }
     }
 
@@ -31,7 +31,7 @@ struct CBStonesView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 chip(title: "All shores", active: shoreFilter == -1) { shoreFilter = -1 }
-                ForEach(CBShores.all, id: \.index) { s in
+                ForEach(SHShores.all, id: \.index) { s in
                     chip(title: s.name, active: shoreFilter == s.index) { shoreFilter = s.index }
                 }
             }
@@ -42,32 +42,32 @@ struct CBStonesView: View {
     private func chip(title: String, active: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(CBTheme.label(12, .semibold))
-                .foregroundColor(active ? .white : CBTheme.slate)
+                .font(SHTheme.label(12, .semibold))
+                .foregroundColor(active ? .white : SHTheme.slate)
                 .padding(.horizontal, 12).padding(.vertical, 7)
-                .background(Capsule().fill(active ? CBTheme.slate : CBTheme.card))
-                .overlay(Capsule().stroke(CBTheme.cardEdge, lineWidth: active ? 0 : 1))
+                .background(Capsule().fill(active ? SHTheme.slate : SHTheme.card))
+                .overlay(Capsule().stroke(SHTheme.cardEdge, lineWidth: active ? 0 : 1))
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
     }
 
-    private func shoreSection(_ shore: CBShore) -> some View {
+    private func shoreSection(_ shore: SHShore) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(shore.name)
-                        .font(CBTheme.displayBold(17))
-                        .foregroundColor(CBTheme.ink)
+                        .font(SHTheme.displayBold(17))
+                        .foregroundColor(SHTheme.ink)
                     Text(shore.blurb)
-                        .font(CBTheme.label(11, .regular))
-                        .foregroundColor(CBTheme.inkSoft)
+                        .font(SHTheme.label(11, .regular))
+                        .foregroundColor(SHTheme.inkSoft)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
                 Text("\(store.shoreUnlocked(shore.index))/9")
-                    .font(CBTheme.mono(12))
-                    .foregroundColor(CBTheme.inkFaint)
+                    .font(SHTheme.mono(12))
+                    .foregroundColor(SHTheme.inkFaint)
             }
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 10),
@@ -81,27 +81,27 @@ struct CBStonesView: View {
     }
 
     private func stoneCell(_ id: Int) -> some View {
-        let kind = CBCatalog.kind(id)
+        let kind = SHCatalog.kind(id)
         let unlocked = store.isUnlocked(id)
-        return Button(action: { selected = CBStoneRef(id: id) }) {
+        return Button(action: { selected = SHStoneRef(id: id) }) {
             VStack(spacing: 5) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(CBTheme.fog.opacity(0.45))
-                    CBStonePortrait(kindID: id, boxSize: CGSize(width: 116, height: 62), locked: !unlocked)
+                        .fill(SHTheme.fog.opacity(0.45))
+                    SHStonePortrait(kindID: id, boxSize: CGSize(width: 116, height: 62), locked: !unlocked)
                     if !unlocked {
-                        CBIconLock(size: 18, color: CBTheme.inkSoft)
+                        SHIconLock(size: 18, color: SHTheme.inkSoft)
                     }
                 }
                 .frame(height: 66)
                 Text(unlocked ? kind.name : "Locked")
-                    .font(CBTheme.label(11.5, .semibold))
-                    .foregroundColor(unlocked ? CBTheme.ink : CBTheme.inkFaint)
+                    .font(SHTheme.label(11.5, .semibold))
+                    .foregroundColor(unlocked ? SHTheme.ink : SHTheme.inkFaint)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                 Text(unlocked ? "\(Int(kind.width)) x \(Int(kind.height)) pt" : "—")
-                    .font(CBTheme.mono(9))
-                    .foregroundColor(CBTheme.inkFaint)
+                    .font(SHTheme.mono(9))
+                    .foregroundColor(SHTheme.inkFaint)
             }
             .contentShape(Rectangle())
         }
@@ -111,56 +111,56 @@ struct CBStonesView: View {
 
 // MARK: - Stone detail
 
-struct CBStoneDetailView: View {
+struct SHStoneDetailView: View {
     let kindID: Int
-    @ObservedObject var store = CBStore.shared
+    @ObservedObject var store = SHStore.shared
     @Environment(\.presentationMode) private var presentation
 
-    private var kind: CBStoneKind { CBCatalog.kind(kindID) }
+    private var kind: SHStoneKind { SHCatalog.kind(kindID) }
     private var unlocked: Bool { store.isUnlocked(kindID) }
 
     var body: some View {
         ZStack(alignment: .top) {
-            CBBackground()
+            SHBackground()
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 14) {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(unlocked ? kind.name : "Locked stone")
-                                .font(CBTheme.displayBold(21))
-                                .foregroundColor(CBTheme.ink)
-                            Text(CBShores.shore(of: kindID).name)
-                                .font(CBTheme.label(12, .medium))
-                                .foregroundColor(CBTheme.inkSoft)
+                                .font(SHTheme.displayBold(21))
+                                .foregroundColor(SHTheme.ink)
+                            Text(SHShores.shore(of: kindID).name)
+                                .font(SHTheme.label(12, .medium))
+                                .foregroundColor(SHTheme.inkSoft)
                         }
                         Spacer(minLength: 8)
                         Button(action: { presentation.wrappedValue.dismiss() }) {
-                            CBIconClose(size: 18).padding(8).contentShape(Rectangle())
+                            SHIconClose(size: 18).padding(8).contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                     }
 
                     ZStack {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(CBTheme.fog.opacity(0.5))
+                            .fill(SHTheme.fog.opacity(0.5))
                         GeometryReader { geo in
-                            CBStonePortrait(kindID: kindID,
+                            SHStonePortrait(kindID: kindID,
                                             boxSize: CGSize(width: geo.size.width, height: geo.size.height),
                                             locked: !unlocked)
                         }
                         .padding(14)
-                        if !unlocked { CBIconLock(size: 34, color: CBTheme.inkSoft) }
+                        if !unlocked { SHIconLock(size: 34, color: SHTheme.inkSoft) }
                     }
                     .frame(height: 220)
 
                     if unlocked {
                         Text(kind.note)
-                            .font(CBTheme.label(13, .regular))
-                            .foregroundColor(CBTheme.inkSoft)
+                            .font(SHTheme.label(13, .regular))
+                            .foregroundColor(SHTheme.inkSoft)
                             .fixedSize(horizontal: false, vertical: true)
 
                         VStack(alignment: .leading, spacing: 8) {
-                            CBSectionHeader(text: "Geometry")
+                            SHSectionHeader(text: "Geometry")
                             row("Vertices", "\(kind.poly.points.count)")
                             row("Footprint", "\(Int(kind.width)) x \(Int(kind.height)) pt")
                             row("Area", String(format: "%.0f pt²", kind.poly.area))
@@ -175,30 +175,30 @@ struct CBStoneDetailView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        CBSectionHeader(text: "Where it comes from")
-                        Text(CBShores.shore(of: kindID).blurb)
-                            .font(CBTheme.label(12, .regular))
-                            .foregroundColor(CBTheme.inkSoft)
+                        SHSectionHeader(text: "Where it comes from")
+                        Text(SHShores.shore(of: kindID).blurb)
+                            .font(SHTheme.label(12, .regular))
+                            .foregroundColor(SHTheme.inkSoft)
                             .fixedSize(horizontal: false, vertical: true)
-                        Rectangle().fill(CBTheme.hairline).frame(height: 1)
+                        Rectangle().fill(SHTheme.hairline).frame(height: 1)
                         HStack(spacing: 8) {
-                            if unlocked { CBIconCheck(size: 15) } else { CBIconLock(size: 15) }
+                            if unlocked { SHIconCheck(size: 15) } else { SHIconLock(size: 15) }
                             Text(store.unlockText(kindID))
-                                .font(CBTheme.label(12, .medium))
-                                .foregroundColor(unlocked ? CBTheme.moss : CBTheme.inkSoft)
+                                .font(SHTheme.label(12, .medium))
+                                .foregroundColor(unlocked ? SHTheme.moss : SHTheme.inkSoft)
                         }
                     }
                     .cbCard(pad: 14)
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, CBSafe.top + 12)
+                .padding(.top, SHSafe.top + 12)
                 .padding(.bottom, 40)
             }
-            CBStatusStrip()
+            SHStatusStrip()
         }
     }
 
-    private func textureName(_ t: CBTexture) -> String {
+    private func textureName(_ t: SHTexture) -> String {
         switch t {
         case .speckle: return "Speckled"
         case .banding: return "Banded"
@@ -211,12 +211,12 @@ struct CBStoneDetailView: View {
     private func row(_ label: String, _ value: String) -> some View {
         HStack {
             Text(label)
-                .font(CBTheme.label(12, .regular))
-                .foregroundColor(CBTheme.inkSoft)
+                .font(SHTheme.label(12, .regular))
+                .foregroundColor(SHTheme.inkSoft)
             Spacer(minLength: 8)
             Text(value)
-                .font(CBTheme.mono(12))
-                .foregroundColor(CBTheme.ink)
+                .font(SHTheme.mono(12))
+                .foregroundColor(SHTheme.ink)
         }
     }
 }

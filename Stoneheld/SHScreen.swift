@@ -3,7 +3,7 @@ import SwiftUI
 /// Shared scaffold: paper background, top strip that keeps content off the
 /// clock, and a bottom inset that clears the floating tab bar (the padding lives
 /// here so pushed screens inherit it too).
-struct CBScreen<Content: View>: View {
+struct SHScreen<Content: View>: View {
     var spacing: CGFloat = 14
     let content: Content
 
@@ -14,34 +14,34 @@ struct CBScreen<Content: View>: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            CBBackground()
+            SHBackground()
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: spacing) {
                     content
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
-                .padding(.top, CBSafe.top + 10)
-                .padding(.bottom, CBTabBar.height + CBSafe.bottom + 26)
+                .padding(.top, SHSafe.top + 10)
+                .padding(.bottom, SHTabBar.height + SHSafe.bottom + 26)
             }
-            CBStatusStrip()
+            SHStatusStrip()
         }
         .navigationBarHidden(true)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct CBBackRow: View {
+struct SHBackRow: View {
     var label: String = "Back"
     @Environment(\.presentationMode) private var presentation
     var body: some View {
         HStack(spacing: 8) {
             Button(action: { presentation.wrappedValue.dismiss() }) {
                 HStack(spacing: 5) {
-                    CBIconChevron(size: 13, color: CBTheme.slate, pointsLeft: true)
+                    SHIconChevron(size: 13, color: SHTheme.slate, pointsLeft: true)
                     Text(label)
-                        .font(CBTheme.label(13, .semibold))
-                        .foregroundColor(CBTheme.slate)
+                        .font(SHTheme.label(13, .semibold))
+                        .foregroundColor(SHTheme.slate)
                 }
                 .padding(.vertical, 6)
                 .padding(.trailing, 10)
@@ -54,14 +54,14 @@ struct CBBackRow: View {
 }
 
 /// A row that behaves like a list item but is built entirely from our own parts.
-struct CBRow<Trailing: View>: View {
+struct SHRow<Trailing: View>: View {
     let title: String
     var subtitle: String? = nil
-    var tint: Color = CBTheme.ink
+    var tint: Color = SHTheme.ink
     let trailing: Trailing
     var action: (() -> Void)? = nil
 
-    init(title: String, subtitle: String? = nil, tint: Color = CBTheme.ink,
+    init(title: String, subtitle: String? = nil, tint: Color = SHTheme.ink,
          action: (() -> Void)? = nil, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
         self.subtitle = subtitle
@@ -74,13 +74,13 @@ struct CBRow<Trailing: View>: View {
         let inner = HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(CBTheme.label(14, .semibold))
+                    .font(SHTheme.label(14, .semibold))
                     .foregroundColor(tint)
                     .multilineTextAlignment(.leading)
                 if let s = subtitle {
                     Text(s)
-                        .font(CBTheme.label(11, .regular))
-                        .foregroundColor(CBTheme.inkSoft)
+                        .font(SHTheme.label(11, .regular))
+                        .foregroundColor(SHTheme.inkSoft)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -98,6 +98,6 @@ struct CBRow<Trailing: View>: View {
     }
 }
 
-enum CBTabBar {
+enum SHTabBar {
     static let height: CGFloat = 58
 }

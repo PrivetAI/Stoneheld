@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Cold-shore palette (forced light, never follows the device theme)
 
-enum CBTheme {
+enum SHTheme {
     // Core
     static let fog = Color(red: 0.851, green: 0.839, blue: 0.812)        // #D9D6CF
     static let slate = Color(red: 0.290, green: 0.322, blue: 0.349)      // #4A5259
@@ -56,7 +56,7 @@ enum CBTheme {
 
 // MARK: - Safe area helper (custom UI hides every nav bar, so we own the strip)
 
-enum CBSafe {
+enum SHSafe {
     private static var keyWindow: UIWindow? {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -71,14 +71,14 @@ enum CBSafe {
 
 // MARK: - Background
 
-struct CBBackground: View, Equatable {
+struct SHBackground: View, Equatable {
     var body: some View {
         ZStack {
-            CBTheme.paper
+            SHTheme.paper
             LinearGradient(
-                colors: [Color.white.opacity(0.42), Color.clear, CBTheme.slate.opacity(0.07)],
+                colors: [Color.white.opacity(0.42), Color.clear, SHTheme.slate.opacity(0.07)],
                 startPoint: .top, endPoint: .bottom)
-            CBGrainOverlay()
+            SHGrainOverlay()
                 .equatable()
                 .opacity(0.5)
         }
@@ -87,7 +87,7 @@ struct CBBackground: View, Equatable {
 }
 
 /// Deterministic sand-grain speckle drawn on a Canvas (no image assets).
-struct CBGrainOverlay: View, Equatable {
+struct SHGrainOverlay: View, Equatable {
     var body: some View {
         Canvas { ctx, size in
             var s: UInt64 = 0x9E3779B97F4A7C15
@@ -101,7 +101,7 @@ struct CBGrainOverlay: View, Equatable {
                 let c = Double((s >> 33) & 0xFFFF) / 65535.0
                 let r = 0.5 + c * 1.1
                 let rect = CGRect(x: a * size.width, y: b * size.height, width: r, height: r)
-                ctx.fill(Path(ellipseIn: rect), with: .color(CBTheme.slate.opacity(0.10 + c * 0.10)))
+                ctx.fill(Path(ellipseIn: rect), with: .color(SHTheme.slate.opacity(0.10 + c * 0.10)))
             }
         }
         .allowsHitTesting(false)
@@ -110,7 +110,7 @@ struct CBGrainOverlay: View, Equatable {
 
 // MARK: - Cards & chrome
 
-struct CBCard: ViewModifier {
+struct SHCard: ViewModifier {
     var pad: CGFloat = 16
     var radius: CGFloat = 14
     func body(content: Content) -> some View {
@@ -118,28 +118,28 @@ struct CBCard: ViewModifier {
             .padding(pad)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(CBTheme.card)
+                    .fill(SHTheme.card)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(CBTheme.cardEdge, lineWidth: 1)
+                    .stroke(SHTheme.cardEdge, lineWidth: 1)
             )
     }
 }
 
 extension View {
     func cbCard(pad: CGFloat = 16, radius: CGFloat = 14) -> some View {
-        modifier(CBCard(pad: pad, radius: radius))
+        modifier(SHCard(pad: pad, radius: radius))
     }
 }
 
 /// The opaque strip that keeps scrolled content off the clock (custom UI = no nav bar).
-struct CBStatusStrip: View {
+struct SHStatusStrip: View {
     var body: some View {
         VStack(spacing: 0) {
-            CBTheme.paper
-                .frame(height: CBSafe.top)
-                .overlay(CBTheme.hairline.frame(height: 1), alignment: .bottom)
+            SHTheme.paper
+                .frame(height: SHSafe.top)
+                .overlay(SHTheme.hairline.frame(height: 1), alignment: .bottom)
             Spacer(minLength: 0)
         }
         .ignoresSafeArea(edges: .top)
@@ -147,41 +147,41 @@ struct CBStatusStrip: View {
     }
 }
 
-struct CBScreenTitle: View {
+struct SHScreenTitle: View {
     let title: String
     var subtitle: String? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title)
-                .font(CBTheme.display(27))
-                .foregroundColor(CBTheme.ink)
+                .font(SHTheme.display(27))
+                .foregroundColor(SHTheme.ink)
             if let s = subtitle {
                 Text(s)
-                    .font(CBTheme.label(13, .regular))
-                    .foregroundColor(CBTheme.inkSoft)
+                    .font(SHTheme.label(13, .regular))
+                    .foregroundColor(SHTheme.inkSoft)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-struct CBSectionHeader: View {
+struct SHSectionHeader: View {
     let text: String
     var body: some View {
         Text(text.uppercased())
-            .font(CBTheme.label(11, .semibold))
+            .font(SHTheme.label(11, .semibold))
             .tracking(1.4)
-            .foregroundColor(CBTheme.inkFaint)
+            .foregroundColor(SHTheme.inkFaint)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-struct CBPill: View {
+struct SHPill: View {
     let text: String
-    var color: Color = CBTheme.slate
+    var color: Color = SHTheme.slate
     var body: some View {
         Text(text)
-            .font(CBTheme.label(11, .semibold))
+            .font(SHTheme.label(11, .semibold))
             .foregroundColor(color)
             .padding(.horizontal, 9)
             .padding(.vertical, 4)
@@ -191,21 +191,21 @@ struct CBPill: View {
     }
 }
 
-struct CBWideButton: View {
+struct SHWideButton: View {
     let title: String
-    var tone: Color = CBTheme.slate
+    var tone: Color = SHTheme.slate
     var enabled: Bool = true
     let action: () -> Void
     var body: some View {
         Button(action: { if enabled { action() } }) {
             Text(title)
-                .font(CBTheme.label(15, .semibold))
-                .foregroundColor(enabled ? Color.white : CBTheme.inkFaint)
+                .font(SHTheme.label(15, .semibold))
+                .foregroundColor(enabled ? Color.white : SHTheme.inkFaint)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 13)
                 .background(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(enabled ? tone : CBTheme.paperDeep)
+                        .fill(enabled ? tone : SHTheme.paperDeep)
                 )
                 .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
@@ -213,14 +213,14 @@ struct CBWideButton: View {
     }
 }
 
-struct CBGhostButton: View {
+struct SHGhostButton: View {
     let title: String
-    var tone: Color = CBTheme.slate
+    var tone: Color = SHTheme.slate
     let action: () -> Void
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(CBTheme.label(14, .semibold))
+                .font(SHTheme.label(14, .semibold))
                 .foregroundColor(tone)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
@@ -236,7 +236,7 @@ struct CBGhostButton: View {
 
 // MARK: - Haptics
 
-enum CBHaptics {
+enum SHHaptics {
     static func tap(_ enabled: Bool) {
         guard enabled else { return }
         let g = UIImpactFeedbackGenerator(style: .light)
@@ -256,7 +256,7 @@ enum CBHaptics {
 
 // MARK: - Formatting
 
-enum CBFormat {
+enum SHFormat {
     private static let posix = Locale(identifier: "en_US_POSIX")
 
     static let dayKeyFormatter: DateFormatter = {

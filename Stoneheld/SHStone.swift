@@ -23,7 +23,7 @@ func cbClamp(_ v: Double, _ lo: Double, _ hi: Double) -> Double {
 // Local coordinates, y pointing UP (mathematical convention). The renderer flips
 // to screen space; the statics never has to think about screen orientation.
 
-struct CBPolygon {
+struct SHPolygon {
     let points: [CGPoint]        // counter-clockwise, convex
     let area: Double             // shoelace
     let centroid: CGPoint        // polygon centroid via the first-moment formula
@@ -34,9 +34,9 @@ struct CBPolygon {
     let boundRadius: Double      // max distance from centroid, for cheap culling
 
     init(_ raw: [CGPoint]) {
-        let hull = CBPolygon.convexHull(raw)
+        let hull = SHPolygon.convexHull(raw)
         var pts = hull
-        if CBPolygon.signedArea(pts) < 0 { pts.reverse() }
+        if SHPolygon.signedArea(pts) < 0 { pts.reverse() }
         if pts.count < 3 {
             // Degenerate input can never happen with the authored catalogue, but
             // a triangle fallback keeps every downstream routine total.
@@ -44,9 +44,9 @@ struct CBPolygon {
         }
         self.points = pts
 
-        let a = CBPolygon.signedArea(pts)
+        let a = SHPolygon.signedArea(pts)
         self.area = abs(a)
-        self.centroid = CBPolygon.momentCentroid(pts, signedArea: a)
+        self.centroid = SHPolygon.momentCentroid(pts, signedArea: a)
 
         var lx = Double.greatestFiniteMagnitude, hx = -Double.greatestFiniteMagnitude
         var ly = Double.greatestFiniteMagnitude, hy = -Double.greatestFiniteMagnitude
@@ -144,7 +144,7 @@ func cbRotateAbout(_ p: CGPoint, pivot: CGPoint, angle: Double) -> CGPoint {
 }
 
 /// Local polygon vertices rotated then translated into world space.
-func cbWorldPoints(_ poly: CBPolygon, position: CGPoint, rotation: Double) -> [CGPoint] {
+func cbWorldPoints(_ poly: SHPolygon, position: CGPoint, rotation: Double) -> [CGPoint] {
     let c = cos(rotation), s = sin(rotation)
     return poly.points.map { p in
         CGPoint(x: Double(position.x) + Double(p.x) * c - Double(p.y) * s,
@@ -152,7 +152,7 @@ func cbWorldPoints(_ poly: CBPolygon, position: CGPoint, rotation: Double) -> [C
     }
 }
 
-func cbWorldCentroid(_ poly: CBPolygon, position: CGPoint, rotation: Double) -> CGPoint {
+func cbWorldCentroid(_ poly: SHPolygon, position: CGPoint, rotation: Double) -> CGPoint {
     let r = cbRotate(poly.centroid, rotation)
     return CGPoint(x: Double(position.x) + Double(r.x), y: Double(position.y) + Double(r.y))
 }
@@ -217,25 +217,25 @@ func cbBounds(_ pts: [CGPoint]) -> (minX: Double, maxX: Double, minY: Double, ma
 
 // MARK: - Stone catalogue entry
 
-enum CBTexture: Int {
+enum SHTexture: Int {
     case speckle, banding, veins, grain, rings
 }
 
-enum CBUnlock {
+enum SHUnlock {
     case start
     case placed(Int)
     case stars(Int)
 }
 
-struct CBStoneKind {
+struct SHStoneKind {
     let id: Int
     let name: String
     let shore: Int              // 0 Pebble Cove, 1 Slate Quarry, 2 River Bend, 3 Basalt Point
-    let poly: CBPolygon
+    let poly: SHPolygon
     let density: Double
-    let tint: Int               // index into CBTheme.stoneTints
-    let texture: CBTexture
-    let unlock: CBUnlock
+    let tint: Int               // index into SHTheme.stoneTints
+    let texture: SHTexture
+    let unlock: SHUnlock
     let note: String
 
     var mass: Double { poly.area * density }
@@ -244,7 +244,7 @@ struct CBStoneKind {
 }
 
 /// A stone that has been committed to the cairn.
-struct CBPlacedStone: Identifiable {
+struct SHPlacedStone: Identifiable {
     let id: Int                 // placement index within this run
     let kindID: Int
     var position: CGPoint

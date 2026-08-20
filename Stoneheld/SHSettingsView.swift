@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct CBSettingsView: View {
-    @ObservedObject var store = CBStore.shared
+struct SHSettingsView: View {
+    @ObservedObject var store = SHStore.shared
     @State private var showPrivacy = false
     @State private var confirmReset = false
 
@@ -12,29 +12,29 @@ struct CBSettingsView: View {
     }
 
     var body: some View {
-        CBScreen(spacing: 12) {
-            CBScreenTitle(title: "Settings",
+        SHScreen(spacing: 12) {
+            SHScreenTitle(title: "Settings",
                           subtitle: "Overlays, controls and your saved progress.")
 
-            NavigationLink(destination: CBStatsView()) {
+            NavigationLink(destination: SHStatsView()) {
                 HStack(spacing: 10) {
-                    CBIconCairn(size: 22, color: CBTheme.slate)
+                    SHIconCairn(size: 22, color: SHTheme.slate)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Progress and Stats")
-                            .font(CBTheme.label(14, .semibold))
-                            .foregroundColor(CBTheme.ink)
+                            .font(SHTheme.label(14, .semibold))
+                            .foregroundColor(SHTheme.ink)
                         Text("\(store.data.totalStonesPlaced) stones seated  ·  \(store.totalStars) stars")
-                            .font(CBTheme.label(11, .regular))
-                            .foregroundColor(CBTheme.inkSoft)
+                            .font(SHTheme.label(11, .regular))
+                            .foregroundColor(SHTheme.inkSoft)
                     }
                     Spacer(minLength: 0)
-                    CBIconChevron(size: 14, color: CBTheme.inkFaint)
+                    SHIconChevron(size: 14, color: SHTheme.inkFaint)
                 }
                 .cbCard(pad: 14)
             }
             .buttonStyle(.plain)
 
-            CBSectionHeader(text: "Placement overlays")
+            SHSectionHeader(text: "Placement overlays")
             VStack(spacing: 0) {
                 toggleRow("Centre of mass plumb line",
                           "The dashed line showing where the combined mass lands.",
@@ -50,7 +50,7 @@ struct CBSettingsView: View {
             }
             .cbCard(pad: 14)
 
-            CBSectionHeader(text: "Controls")
+            SHSectionHeader(text: "Controls")
             VStack(spacing: 12) {
                 segmentRow(title: "Rotation step",
                            options: ["1°", "5°"],
@@ -72,15 +72,15 @@ struct CBSettingsView: View {
             }
             .cbCard(pad: 14)
 
-            CBSectionHeader(text: "About")
+            SHSectionHeader(text: "About")
             VStack(spacing: 0) {
                 Button(action: { store.mutate { $0.onboardingDone = false } }) {
                     HStack {
                         Text("Replay the explainer")
-                            .font(CBTheme.label(13.5, .medium))
-                            .foregroundColor(CBTheme.ink)
+                            .font(SHTheme.label(13.5, .medium))
+                            .foregroundColor(SHTheme.ink)
                         Spacer()
-                        CBIconChevron(size: 13, color: CBTheme.inkFaint)
+                        SHIconChevron(size: 13, color: SHTheme.inkFaint)
                     }
                     .padding(.vertical, 11)
                     .contentShape(Rectangle())
@@ -90,10 +90,10 @@ struct CBSettingsView: View {
                 Button(action: { showPrivacy = true }) {
                     HStack {
                         Text("Privacy Policy")
-                            .font(CBTheme.label(13.5, .medium))
-                            .foregroundColor(CBTheme.ink)
+                            .font(SHTheme.label(13.5, .medium))
+                            .foregroundColor(SHTheme.ink)
                         Spacer()
-                        CBIconChevron(size: 13, color: CBTheme.inkFaint)
+                        SHIconChevron(size: 13, color: SHTheme.inkFaint)
                     }
                     .padding(.vertical, 11)
                     .contentShape(Rectangle())
@@ -102,12 +102,12 @@ struct CBSettingsView: View {
                 divider
                 HStack {
                     Text("Version")
-                        .font(CBTheme.label(13.5, .medium))
-                        .foregroundColor(CBTheme.ink)
+                        .font(SHTheme.label(13.5, .medium))
+                        .foregroundColor(SHTheme.ink)
                     Spacer()
                     Text(versionText)
-                        .font(CBTheme.mono(12))
-                        .foregroundColor(CBTheme.inkFaint)
+                        .font(SHTheme.mono(12))
+                        .foregroundColor(SHTheme.inkFaint)
                 }
                 .padding(.vertical, 11)
             }
@@ -115,27 +115,27 @@ struct CBSettingsView: View {
 
             Button(action: { confirmReset = true }) {
                 HStack(spacing: 8) {
-                    CBIconTrash(size: 15)
+                    SHIconTrash(size: 15)
                     Text("Reset all progress")
-                        .font(CBTheme.label(13.5, .semibold))
-                        .foregroundColor(CBTheme.rust)
+                        .font(SHTheme.label(13.5, .semibold))
+                        .foregroundColor(SHTheme.rust)
                     Spacer(minLength: 0)
                 }
                 .padding(.vertical, 13).padding(.horizontal, 14)
                 .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(CBTheme.rust.opacity(0.45), lineWidth: 1))
+                    .stroke(SHTheme.rust.opacity(0.45), lineWidth: 1))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
-            Text("Cairn Balance keeps everything on this device. There is no account, no sign-in and no data leaves the phone.")
-                .font(CBTheme.label(10.5, .regular))
-                .foregroundColor(CBTheme.inkFaint)
+            Text("Stoneheld keeps everything on this device. There is no account, no sign-in and no data leaves the phone.")
+                .font(SHTheme.label(10.5, .regular))
+                .foregroundColor(SHTheme.inkFaint)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 2)
         }
         .sheet(isPresented: $showPrivacy) {
-            CairnBalanceWebPanel(urlString: CairnBalanceLinks.privacy)
+            StoneheldWebPanel(urlString: StoneheldLinks.privacy)
         }
         .alert("Reset all progress?", isPresented: $confirmReset) {
             Button("Cancel", role: .cancel) { }
@@ -146,7 +146,7 @@ struct CBSettingsView: View {
     }
 
     private var divider: some View {
-        Rectangle().fill(CBTheme.hairline).frame(height: 1)
+        Rectangle().fill(SHTheme.hairline).frame(height: 1)
     }
 
     private func toggleRow(_ title: String, _ note: String, _ on: Bool,
@@ -155,17 +155,17 @@ struct CBSettingsView: View {
             HStack(alignment: .center, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(CBTheme.label(13.5, .medium))
-                        .foregroundColor(CBTheme.ink)
+                        .font(SHTheme.label(13.5, .medium))
+                        .foregroundColor(SHTheme.ink)
                         .multilineTextAlignment(.leading)
                     Text(note)
-                        .font(CBTheme.label(10.5, .regular))
-                        .foregroundColor(CBTheme.inkSoft)
+                        .font(SHTheme.label(10.5, .regular))
+                        .foregroundColor(SHTheme.inkSoft)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
-                CBToggleMark(on: on)
+                SHToggleMark(on: on)
             }
             .padding(.vertical, 11)
             .contentShape(Rectangle())
@@ -177,25 +177,25 @@ struct CBSettingsView: View {
                             _ action: @escaping (Int) -> Void) -> some View {
         HStack(spacing: 10) {
             Text(title)
-                .font(CBTheme.label(13.5, .medium))
-                .foregroundColor(CBTheme.ink)
+                .font(SHTheme.label(13.5, .medium))
+                .foregroundColor(SHTheme.ink)
             Spacer(minLength: 8)
             HStack(spacing: 3) {
                 ForEach(Array(options.enumerated()), id: \.offset) { item in
                     Button(action: { action(item.offset) }) {
                         Text(item.element)
-                            .font(CBTheme.label(12, .semibold))
-                            .foregroundColor(item.offset == index ? .white : CBTheme.slate)
+                            .font(SHTheme.label(12, .semibold))
+                            .foregroundColor(item.offset == index ? .white : SHTheme.slate)
                             .frame(width: 52, height: 28)
                             .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
-                                .fill(item.offset == index ? CBTheme.slate : Color.clear))
+                                .fill(item.offset == index ? SHTheme.slate : Color.clear))
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(3)
-            .background(RoundedRectangle(cornerRadius: 9, style: .continuous).fill(CBTheme.paperDeep))
+            .background(RoundedRectangle(cornerRadius: 9, style: .continuous).fill(SHTheme.paperDeep))
         }
         .padding(.vertical, 2)
     }

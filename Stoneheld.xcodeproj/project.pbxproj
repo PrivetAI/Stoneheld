@@ -1,0 +1,409 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09B3074FE4CCC912CA09270F /* SHScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AE479552ACF40147BFF1 /* SHScreen.swift */; };
+		0D574DE1A4F1F80BD8C0AAB9 /* SHRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFB80B1288F3B592B301CB3 /* SHRender.swift */; };
+		0DA2A8FEF3731DE8253D102B /* SHTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F582FCC39237FF8A44063F3C /* SHTheme.swift */; };
+		134A310F3D1E1D0BA4C89D86 /* SHStone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1EAB399C872771D155B56 /* SHStone.swift */; };
+		23BFD55131C6A99585F991F5 /* SHStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99476F895D3F1E99810CB /* SHStackView.swift */; };
+		24F402389727CF8169452359 /* StoneheldLoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DBEADC2C3900BC271654A4C /* StoneheldLoadingScreen.swift */; };
+		2D5117C606269A14C150FEA5 /* SHPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEEB9426122955CD417CCF2 /* SHPlayView.swift */; };
+		4DFF4A7A26F4ED5C2FDBB181 /* SHGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F712A46FECB82558925D31 /* SHGalleryView.swift */; };
+		5969032A44796B173D302D19 /* SHTrials.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BB51C324686FB459021EA8 /* SHTrials.swift */; };
+		617A122B00D87C7FD56371D3 /* SHEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FA4AE539CC6E33F90C96F9 /* SHEngine.swift */; };
+		618C244C85569460C7CDAE16 /* SHIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EF90360A377BB10E0DD383 /* SHIcons.swift */; };
+		6963D01CACE60169F46E0AD4 /* SHSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ACFA9E014DC02C2B65AF30 /* SHSettingsView.swift */; };
+		8584D453AFE2137892D4FED2 /* SHStonesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F505418E9B1C8FD9928BF89 /* SHStonesView.swift */; };
+		881199097F02DD502B4F411F /* SHOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0224314B7CB68713A2B524 /* SHOnboarding.swift */; };
+		92866CF1D7C1496AC46B8276 /* SHStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59995EB7F09BCE6F3B3A0249 /* SHStatsView.swift */; };
+		978D5DA2D1D27850A7DCA9EA /* SHStoneData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CA07D78B15C856D377ACA4 /* SHStoneData.swift */; };
+		A0EA8CD424F21DD8EC41CCDD /* SHSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5C6ADE3647F5B62B81B7CB /* SHSave.swift */; };
+		A2C4FC865FE27BADCA920E37 /* StoneheldApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCF967ABE9B1D7C6450252B /* StoneheldApp.swift */; };
+		AC206B8F1A5378F5FA5D09AE /* SHStatics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D40A5A28136810DB9D257A /* SHStatics.swift */; };
+		B3BDA6BEDC81E037A95945C1 /* SHRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE81187920E708C2BA200661 /* SHRootView.swift */; };
+		D25ADC6296A92EB427D05C9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE841FE39C05C1900B9CB766 /* Assets.xcassets */; };
+		DCA0FDABE730D1AC7832D9FC /* StoneheldWebPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB941A3A27AF13228116489 /* StoneheldWebPanel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		09FA4AE539CC6E33F90C96F9 /* SHEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHEngine.swift; sourceTree = "<group>"; };
+		1DBEADC2C3900BC271654A4C /* StoneheldLoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoneheldLoadingScreen.swift; sourceTree = "<group>"; };
+		29ACFA9E014DC02C2B65AF30 /* SHSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHSettingsView.swift; sourceTree = "<group>"; };
+		33DE6DC81E5D0633B84BBFCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		39D40A5A28136810DB9D257A /* SHStatics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStatics.swift; sourceTree = "<group>"; };
+		580746D67F6CB4BF00C81E8A /* Stoneheld.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "Stoneheld.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		59995EB7F09BCE6F3B3A0249 /* SHStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStatsView.swift; sourceTree = "<group>"; };
+		5A0224314B7CB68713A2B524 /* SHOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHOnboarding.swift; sourceTree = "<group>"; };
+		73F712A46FECB82558925D31 /* SHGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHGalleryView.swift; sourceTree = "<group>"; };
+		74CA07D78B15C856D377ACA4 /* SHStoneData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStoneData.swift; sourceTree = "<group>"; };
+		7AEEB9426122955CD417CCF2 /* SHPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHPlayView.swift; sourceTree = "<group>"; };
+		7BB941A3A27AF13228116489 /* StoneheldWebPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoneheldWebPanel.swift; sourceTree = "<group>"; };
+		8EFB80B1288F3B592B301CB3 /* SHRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHRender.swift; sourceTree = "<group>"; };
+		8F505418E9B1C8FD9928BF89 /* SHStonesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStonesView.swift; sourceTree = "<group>"; };
+		94EF90360A377BB10E0DD383 /* SHIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHIcons.swift; sourceTree = "<group>"; };
+		9DB1EAB399C872771D155B56 /* SHStone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStone.swift; sourceTree = "<group>"; };
+		AFCF967ABE9B1D7C6450252B /* StoneheldApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoneheldApp.swift; sourceTree = "<group>"; };
+		C2BB51C324686FB459021EA8 /* SHTrials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHTrials.swift; sourceTree = "<group>"; };
+		DB15AE479552ACF40147BFF1 /* SHScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHScreen.swift; sourceTree = "<group>"; };
+		DE81187920E708C2BA200661 /* SHRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHRootView.swift; sourceTree = "<group>"; };
+		DE841FE39C05C1900B9CB766 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DF5C6ADE3647F5B62B81B7CB /* SHSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHSave.swift; sourceTree = "<group>"; };
+		ECE99476F895D3F1E99810CB /* SHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHStackView.swift; sourceTree = "<group>"; };
+		F582FCC39237FF8A44063F3C /* SHTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHTheme.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		568E86C9E6DFB9DDE8E22086 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				580746D67F6CB4BF00C81E8A /* Stoneheld.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6F2EE6DA0E4EE3969BFF5640 /* Stoneheld */ = {
+			isa = PBXGroup;
+			children = (
+				DE841FE39C05C1900B9CB766 /* Assets.xcassets */,
+				AFCF967ABE9B1D7C6450252B /* StoneheldApp.swift */,
+				1DBEADC2C3900BC271654A4C /* StoneheldLoadingScreen.swift */,
+				7BB941A3A27AF13228116489 /* StoneheldWebPanel.swift */,
+				09FA4AE539CC6E33F90C96F9 /* SHEngine.swift */,
+				73F712A46FECB82558925D31 /* SHGalleryView.swift */,
+				94EF90360A377BB10E0DD383 /* SHIcons.swift */,
+				5A0224314B7CB68713A2B524 /* SHOnboarding.swift */,
+				7AEEB9426122955CD417CCF2 /* SHPlayView.swift */,
+				8EFB80B1288F3B592B301CB3 /* SHRender.swift */,
+				DE81187920E708C2BA200661 /* SHRootView.swift */,
+				DF5C6ADE3647F5B62B81B7CB /* SHSave.swift */,
+				DB15AE479552ACF40147BFF1 /* SHScreen.swift */,
+				29ACFA9E014DC02C2B65AF30 /* SHSettingsView.swift */,
+				ECE99476F895D3F1E99810CB /* SHStackView.swift */,
+				39D40A5A28136810DB9D257A /* SHStatics.swift */,
+				59995EB7F09BCE6F3B3A0249 /* SHStatsView.swift */,
+				9DB1EAB399C872771D155B56 /* SHStone.swift */,
+				74CA07D78B15C856D377ACA4 /* SHStoneData.swift */,
+				8F505418E9B1C8FD9928BF89 /* SHStonesView.swift */,
+				F582FCC39237FF8A44063F3C /* SHTheme.swift */,
+				C2BB51C324686FB459021EA8 /* SHTrials.swift */,
+				33DE6DC81E5D0633B84BBFCD /* Info.plist */,
+			);
+			path = Stoneheld;
+			sourceTree = "<group>";
+		};
+		73E015C3DB846DBE1426C034 = {
+			isa = PBXGroup;
+			children = (
+				6F2EE6DA0E4EE3969BFF5640 /* Stoneheld */,
+				568E86C9E6DFB9DDE8E22086 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4728B7F6BAC1FD263A502924 /* Stoneheld */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0BAC47FE1D7DC034C8F19CD7 /* Build configuration list for PBXNativeTarget "Stoneheld" */;
+			buildPhases = (
+				363555F47018F8745FD6BCA9 /* Sources */,
+				2A6C8BE080490840878E01A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Stoneheld";
+			packageProductDependencies = (
+			);
+			productName = "Stoneheld";
+			productReference = 580746D67F6CB4BF00C81E8A /* Stoneheld.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD557E496B841351B8F57802 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4728B7F6BAC1FD263A502924 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = F517D09D38CE15DCF6C810C9 /* Build configuration list for PBXProject "Stoneheld" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 73E015C3DB846DBE1426C034;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 568E86C9E6DFB9DDE8E22086 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4728B7F6BAC1FD263A502924 /* Stoneheld */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2A6C8BE080490840878E01A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D25ADC6296A92EB427D05C9C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		363555F47018F8745FD6BCA9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				617A122B00D87C7FD56371D3 /* SHEngine.swift in Sources */,
+				4DFF4A7A26F4ED5C2FDBB181 /* SHGalleryView.swift in Sources */,
+				618C244C85569460C7CDAE16 /* SHIcons.swift in Sources */,
+				881199097F02DD502B4F411F /* SHOnboarding.swift in Sources */,
+				2D5117C606269A14C150FEA5 /* SHPlayView.swift in Sources */,
+				0D574DE1A4F1F80BD8C0AAB9 /* SHRender.swift in Sources */,
+				B3BDA6BEDC81E037A95945C1 /* SHRootView.swift in Sources */,
+				A0EA8CD424F21DD8EC41CCDD /* SHSave.swift in Sources */,
+				09B3074FE4CCC912CA09270F /* SHScreen.swift in Sources */,
+				6963D01CACE60169F46E0AD4 /* SHSettingsView.swift in Sources */,
+				23BFD55131C6A99585F991F5 /* SHStackView.swift in Sources */,
+				AC206B8F1A5378F5FA5D09AE /* SHStatics.swift in Sources */,
+				92866CF1D7C1496AC46B8276 /* SHStatsView.swift in Sources */,
+				134A310F3D1E1D0BA4C89D86 /* SHStone.swift in Sources */,
+				978D5DA2D1D27850A7DCA9EA /* SHStoneData.swift in Sources */,
+				8584D453AFE2137892D4FED2 /* SHStonesView.swift in Sources */,
+				0DA2A8FEF3731DE8253D102B /* SHTheme.swift in Sources */,
+				5969032A44796B173D302D19 /* SHTrials.swift in Sources */,
+				A2C4FC865FE27BADCA920E37 /* StoneheldApp.swift in Sources */,
+				24F402389727CF8169452359 /* StoneheldLoadingScreen.swift in Sources */,
+				DCA0FDABE730D1AC7832D9FC /* StoneheldWebPanel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3883E8DF7FA604D7A0DB3A24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		47705AE6E577447D79ECA1FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Stoneheld/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stoneheld.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		BCA18ABCE90163846DFBA7E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Stoneheld/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stoneheld.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FB60AAA1D94439C79C622153 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0BAC47FE1D7DC034C8F19CD7 /* Build configuration list for PBXNativeTarget "Stoneheld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCA18ABCE90163846DFBA7E0 /* Debug */,
+				47705AE6E577447D79ECA1FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F517D09D38CE15DCF6C810C9 /* Build configuration list for PBXProject "Stoneheld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB60AAA1D94439C79C622153 /* Debug */,
+				3883E8DF7FA604D7A0DB3A24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD557E496B841351B8F57802 /* Project object */;
+}

@@ -1,30 +1,30 @@
 import SwiftUI
 
-struct CBSession: Identifiable, Equatable {
+struct SHSession: Identifiable, Equatable {
     let id: UUID
-    var mode: CBMode
+    var mode: SHMode
     var trialID: Int?
     var dayKey: String?
 
-    init(mode: CBMode, trialID: Int? = nil, dayKey: String? = nil) {
+    init(mode: SHMode, trialID: Int? = nil, dayKey: String? = nil) {
         self.id = UUID()
         self.mode = mode
         self.trialID = trialID
         self.dayKey = dayKey
     }
 
-    static func == (a: CBSession, b: CBSession) -> Bool { a.id == b.id }
+    static func == (a: SHSession, b: SHSession) -> Bool { a.id == b.id }
 }
 
 // MARK: - Play screen
 
-struct CBPlayView: View {
-    let session: CBSession
+struct SHPlayView: View {
+    let session: SHSession
     var onExit: () -> Void
-    var onReplace: (CBSession) -> Void
+    var onReplace: (SHSession) -> Void
 
-    @ObservedObject var store = CBStore.shared
-    @StateObject private var engine = CBEngine()
+    @ObservedObject var store = SHStore.shared
+    @StateObject private var engine = SHEngine()
 
     @State private var started = false
     @State private var showPause = false
@@ -36,23 +36,23 @@ struct CBPlayView: View {
     @State private var ringActive = false
     @State private var rotateBase: Double? = nil
 
-    private var trial: CBTrial? {
-        session.trialID.flatMap { CBTrialData.trial($0) }
+    private var trial: SHTrial? {
+        session.trialID.flatMap { SHTrialData.trial($0) }
     }
 
     @State private var compact = false
     @State private var suppressCommit = false
 
-    private var controlHeight: CGFloat { compact ? 82 : (CBSafe.isShort ? 96 : 108) }
+    private var controlHeight: CGFloat { compact ? 82 : (SHSafe.isShort ? 96 : 108) }
 
     var body: some View {
         GeometryReader { outer in
             ZStack(alignment: .top) {
-                CBBackground().equatable()
+                SHBackground().equatable()
 
                 VStack(spacing: 0) {
                     header
-                        .padding(.top, CBSafe.top + (compact ? 2 : 4))
+                        .padding(.top, SHSafe.top + (compact ? 2 : 4))
                         .padding(.horizontal, 14)
                         .padding(.bottom, compact ? 3 : 6)
 
@@ -62,7 +62,7 @@ struct CBPlayView: View {
                                 if !started {
                                     started = true
                                     engine.start(mode: session.mode, trial: trial,
-                                                 dayKey: session.dayKey ?? CBDaily.todayKey(),
+                                                 dayKey: session.dayKey ?? SHDaily.todayKey(),
                                                  boardSize: geo.size, store: store)
                                 } else {
                                     engine.updateBoard(size: geo.size)
@@ -74,19 +74,19 @@ struct CBPlayView: View {
                     controlBar
                         .frame(height: controlHeight)
                         .padding(.horizontal, 14)
-                        .padding(.bottom, max(compact ? 4 : 6, CBSafe.bottom * 0.5))
+                        .padding(.bottom, max(compact ? 4 : 6, SHSafe.bottom * 0.5))
                 }
 
                 if !engine.hint.isEmpty && engine.phase == .placing && !showPause {
                     Text(engine.hint)
-                        .font(CBTheme.label(12, .semibold))
+                        .font(SHTheme.label(12, .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12).padding(.vertical, 7)
-                        .background(Capsule().fill(CBTheme.rust.opacity(0.92)))
-                        .padding(.top, CBSafe.top + (compact ? 44 : 62))
+                        .background(Capsule().fill(SHTheme.rust.opacity(0.92)))
+                        .padding(.top, SHSafe.top + (compact ? 44 : 62))
                 }
 
-                CBStatusStrip()
+                SHStatusStrip()
 
                 if showPause { pauseOverlay }
                 if let r = engine.result { resultOverlay(r) }
@@ -106,12 +106,12 @@ struct CBPlayView: View {
                 Button(action: { showPause = true }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 9, style: .continuous)
-                            .fill(CBTheme.card)
+                            .fill(SHTheme.card)
                             .overlay(RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                .stroke(CBTheme.cardEdge, lineWidth: 1))
+                                .stroke(SHTheme.cardEdge, lineWidth: 1))
                         HStack(spacing: 3) {
-                            Capsule().fill(CBTheme.slate).frame(width: 3, height: 13)
-                            Capsule().fill(CBTheme.slate).frame(width: 3, height: 13)
+                            Capsule().fill(SHTheme.slate).frame(width: 3, height: 13)
+                            Capsule().fill(SHTheme.slate).frame(width: 3, height: 13)
                         }
                     }
                     .frame(width: 34, height: 34)
@@ -121,17 +121,17 @@ struct CBPlayView: View {
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(titleText)
-                        .font(CBTheme.displayBold(16))
-                        .foregroundColor(CBTheme.ink)
+                        .font(SHTheme.displayBold(16))
+                        .foregroundColor(SHTheme.ink)
                         .lineLimit(1)
                     Text(subtitleText)
-                        .font(CBTheme.label(10.5, .regular))
-                        .foregroundColor(CBTheme.inkSoft)
+                        .font(SHTheme.label(10.5, .regular))
+                        .foregroundColor(SHTheme.inkSoft)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 4)
 
-                statBlock(value: CBFormat.height(engine.currentHeight), unit: "pt")
+                statBlock(value: SHFormat.height(engine.currentHeight), unit: "pt")
                 statBlock(value: "\(engine.placed.count)", unit: engine.stonesRemaining.map { "/\(engine.placed.count + $0)" } ?? "stones")
             }
 
@@ -147,11 +147,11 @@ struct CBPlayView: View {
     private func statBlock(value: String, unit: String) -> some View {
         VStack(alignment: .trailing, spacing: 0) {
             Text(value)
-                .font(CBTheme.monoBold(16))
-                .foregroundColor(CBTheme.ink)
+                .font(SHTheme.monoBold(16))
+                .foregroundColor(SHTheme.ink)
             Text(unit)
-                .font(CBTheme.label(9, .medium))
-                .foregroundColor(CBTheme.inkFaint)
+                .font(SHTheme.label(9, .medium))
+                .foregroundColor(SHTheme.inkFaint)
         }
         .frame(minWidth: 40, alignment: .trailing)
     }
@@ -167,7 +167,7 @@ struct CBPlayView: View {
     private var subtitleText: String {
         switch session.mode {
         case .trials: return trial?.goalText ?? ""
-        case .daily: return CBFormat.prettyDayFormatter.string(from: Date())
+        case .daily: return SHFormat.prettyDayFormatter.string(from: Date())
         case .zen: return store.data.zenWind ? "Gentle wind on" : "No wind, no clock"
         case .windward: return "Lateral force on every centre of mass"
         }
@@ -186,12 +186,12 @@ struct CBPlayView: View {
                 let v = m ?? 0
                 let frac = CGFloat(cbClamp((v + 1) / 2, 0, 1))
                 ZStack(alignment: .leading) {
-                    Capsule().fill(CBTheme.paperDeep)
+                    Capsule().fill(SHTheme.paperDeep)
                     Capsule()
-                        .fill(CBTheme.marginColor(v))
+                        .fill(SHTheme.marginColor(v))
                         .frame(width: m == nil ? 0 : max(4, w * frac))
                     Rectangle()
-                        .fill(CBTheme.ink.opacity(0.30))
+                        .fill(SHTheme.ink.opacity(0.30))
                         .frame(width: 1.5)
                         .offset(x: w * 0.5)
                 }
@@ -199,35 +199,35 @@ struct CBPlayView: View {
             .frame(height: 7)
             HStack {
                 Text("Balance margin")
-                    .font(CBTheme.label(9.5, .medium))
-                    .foregroundColor(CBTheme.inkFaint)
+                    .font(SHTheme.label(9.5, .medium))
+                    .foregroundColor(SHTheme.inkFaint)
                 Spacer()
-                Text(m == nil ? "—" : CBFormat.margin(m ?? 0))
-                    .font(CBTheme.mono(10))
-                    .foregroundColor(CBTheme.marginColor(m ?? 0))
+                Text(m == nil ? "—" : SHFormat.margin(m ?? 0))
+                    .font(SHTheme.mono(10))
+                    .foregroundColor(SHTheme.marginColor(m ?? 0))
             }
         }
     }
 
     private var windGauge: some View {
         HStack(spacing: 8) {
-            CBIconWind(size: 16, color: CBTheme.seaglass)
+            SHIconWind(size: 16, color: SHTheme.seaglass)
             GeometryReader { geo in
                 let w = geo.size.width
                 let a = cbClamp(engine.windAccel / max(0.0001, engine.windStrength), -1, 1)
                 ZStack(alignment: .center) {
-                    Capsule().fill(CBTheme.paperDeep)
-                    Rectangle().fill(CBTheme.ink.opacity(0.25)).frame(width: 1.5)
+                    Capsule().fill(SHTheme.paperDeep)
+                    Rectangle().fill(SHTheme.ink.opacity(0.25)).frame(width: 1.5)
                     Capsule()
-                        .fill(CBTheme.seaglass)
+                        .fill(SHTheme.seaglass)
                         .frame(width: max(3, CGFloat(abs(a)) * w * 0.5), height: 6)
                         .offset(x: CGFloat(a) * w * 0.25)
                 }
             }
             .frame(height: 6)
             Text(windLabel)
-                .font(CBTheme.mono(9.5))
-                .foregroundColor(CBTheme.inkSoft)
+                .font(SHTheme.mono(9.5))
+                .foregroundColor(SHTheme.inkSoft)
                 .frame(width: 52, alignment: .trailing)
         }
     }
@@ -259,7 +259,7 @@ struct CBPlayView: View {
                     dragMoved = false
                     grabOffset = 0
                     if let id = engine.currentKindID, let pose = engine.heldPose() {
-                        let k = CBCatalog.kind(id)
+                        let k = SHCatalog.kind(id)
                         let world = cbWorldPoints(k.poly, position: pose.pos, rotation: pose.rot)
                         let screenPts = world.map { engine.screenPoint($0) }
                         if cbPointInConvex(screenPts, v.startLocation) {
@@ -302,7 +302,7 @@ struct CBPlayView: View {
         // Sky wash and waterline, drawn from the passed-in parent size.
         let sky = Path(CGRect(origin: .zero, size: size))
         ctx.fill(sky, with: .linearGradient(
-            Gradient(colors: [CBTheme.fog.opacity(0.55), CBTheme.paper.opacity(0.0)]),
+            Gradient(colors: [SHTheme.fog.opacity(0.55), SHTheme.paper.opacity(0.0)]),
             startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height * 0.72)))
 
         let groundY = size.height - CGFloat(engine.groundInset) + CGFloat(engine.cameraY)
@@ -313,21 +313,21 @@ struct CBPlayView: View {
             shore.addLine(to: CGPoint(x: size.width, y: size.height))
             shore.addLine(to: CGPoint(x: 0, y: size.height))
             shore.closeSubpath()
-            ctx.fill(shore, with: .color(CBTheme.driftwood.opacity(0.20)))
+            ctx.fill(shore, with: .color(SHTheme.driftwood.opacity(0.20)))
         }
 
         // Plinth
-        CBRender.drawBase(&ctx, map: { local in
+        SHRender.drawBase(&ctx, map: { local in
             engine.screenPoint(CGPoint(x: engine.baseX + Double(local.x), y: Double(local.y)))
         }, scale: 1)
 
         // Placed stones, with the topple transform applied above the failure line
         for (i, s) in engine.placed.enumerated() {
-            let k = CBCatalog.kind(s.kindID)
+            let k = SHCatalog.kind(s.kindID)
             let t = engine.toppleTransform(index: i)
             let c = cos(s.rotation), sn = sin(s.rotation)
             let alpha = t?.fade ?? 1
-            CBRender.drawStone(&ctx, kind: k, map: { local in
+            SHRender.drawStone(&ctx, kind: k, map: { local in
                 let wx = Double(s.position.x) + Double(local.x) * c - Double(local.y) * sn
                 let wy = Double(s.position.y) + Double(local.x) * sn + Double(local.y) * c
                 var p = CGPoint(x: wx, y: wy)
@@ -342,7 +342,7 @@ struct CBPlayView: View {
         guard engine.phase == .placing || engine.phase == .settling else { return }
 
         let lv = engine.previewLevels()
-        let weak = CBStability.weakest(lv)
+        let weak = SHStability.weakest(lv)
 
         // Support interval of the level that is closest to going
         if store.data.showSupport, let w = weak, w.seatWidth >= 0 {
@@ -351,14 +351,14 @@ struct CBPlayView: View {
             var seat = Path()
             seat.move(to: CGPoint(x: a.x, y: a.y))
             seat.addLine(to: CGPoint(x: max(b.x, a.x + 2), y: b.y))
-            ctx.stroke(seat, with: .color(CBTheme.seaglass.opacity(0.95)),
+            ctx.stroke(seat, with: .color(SHTheme.seaglass.opacity(0.95)),
                        style: StrokeStyle(lineWidth: 4, lineCap: .round))
             for x in [w.xL, w.xR] {
                 let p = engine.screenPoint(CGPoint(x: x, y: w.y))
                 var tick = Path()
                 tick.move(to: CGPoint(x: p.x, y: p.y - 7))
                 tick.addLine(to: CGPoint(x: p.x, y: p.y + 7))
-                ctx.stroke(tick, with: .color(CBTheme.seaglass), lineWidth: 1.6)
+                ctx.stroke(tick, with: .color(SHTheme.seaglass), lineWidth: 1.6)
             }
         }
 
@@ -369,7 +369,7 @@ struct CBPlayView: View {
             var line = Path()
             line.move(to: top)
             line.addLine(to: bottom)
-            let col = CBTheme.marginColor(w.margin)
+            let col = SHTheme.marginColor(w.margin)
             ctx.stroke(line, with: .color(col.opacity(0.9)),
                        style: StrokeStyle(lineWidth: 1.6, dash: [5, 4]))
             let r: CGFloat = 5
@@ -389,36 +389,36 @@ struct CBPlayView: View {
         // Ghost of where the stone will seat
         if engine.phase == .placing, let id = engine.currentKindID,
            let p = engine.preview, p.supported {
-            let k = CBCatalog.kind(id)
+            let k = SHCatalog.kind(id)
             let c = cos(p.rotation), sn = sin(p.rotation)
-            let ghostPath = CBRender.path(k, map: { local in
+            let ghostPath = SHRender.path(k, map: { local in
                 let wx = Double(p.position.x) + Double(local.x) * c - Double(local.y) * sn
                 let wy = Double(p.position.y) + Double(local.x) * sn + Double(local.y) * c
                 return engine.screenPoint(CGPoint(x: wx, y: wy))
             })
             ctx.stroke(ghostPath,
-                       with: .color(p.onCrown ? CBTheme.slate.opacity(0.55) : CBTheme.rust.opacity(0.7)),
+                       with: .color(p.onCrown ? SHTheme.slate.opacity(0.55) : SHTheme.rust.opacity(0.7)),
                        style: StrokeStyle(lineWidth: 1.4, dash: [5, 4]))
         }
 
         // The stone in hand, plus a drop guide
         if let pose = engine.heldPose(), let id = engine.currentKindID {
-            let k = CBCatalog.kind(id)
+            let k = SHCatalog.kind(id)
             if engine.phase == .placing, let p = engine.preview, p.supported, p.onCrown {
                 let a = engine.screenPoint(CGPoint(x: Double(pose.pos.x), y: Double(pose.pos.y)))
                 let b = engine.screenPoint(CGPoint(x: Double(p.position.x), y: Double(p.position.y)))
                 var guideLine = Path()
                 guideLine.move(to: a)
                 guideLine.addLine(to: b)
-                ctx.stroke(guideLine, with: .color(CBTheme.slate.opacity(0.22)),
+                ctx.stroke(guideLine, with: .color(SHTheme.slate.opacity(0.22)),
                            style: StrokeStyle(lineWidth: 1, dash: [3, 5]))
             }
             let c = cos(pose.rot), sn = sin(pose.rot)
-            CBRender.drawStone(&ctx, kind: k, map: { local in
+            SHRender.drawStone(&ctx, kind: k, map: { local in
                 let wx = Double(pose.pos.x) + Double(local.x) * c - Double(local.y) * sn
                 let wy = Double(pose.pos.y) + Double(local.x) * sn + Double(local.y) * c
                 return engine.screenPoint(CGPoint(x: wx, y: wy))
-            }, scale: 1, opacity: pose.alpha, outline: CBTheme.ink.opacity(0.55))
+            }, scale: 1, opacity: pose.alpha, outline: SHTheme.ink.opacity(0.55))
         }
 
         // Seat confirmation pulse
@@ -427,7 +427,7 @@ struct CBPlayView: View {
             let r = CGFloat(10 + (1 - engine.pulse) * 26)
             ctx.stroke(Path(ellipseIn: CGRect(x: p.x - r, y: p.y - r * 0.45,
                                               width: r * 2, height: r * 0.9)),
-                       with: .color(CBTheme.moss.opacity(engine.pulse * 0.55)), lineWidth: 2)
+                       with: .color(SHTheme.moss.opacity(engine.pulse * 0.55)), lineWidth: 2)
         }
     }
 
@@ -440,12 +440,12 @@ struct CBPlayView: View {
                 HStack(spacing: 6) {
                     stepButton(plus: false)
                     Text("\(engine.holdDegrees)°")
-                        .font(CBTheme.monoBold(14))
-                        .foregroundColor(CBTheme.ink)
+                        .font(SHTheme.monoBold(14))
+                        .foregroundColor(SHTheme.ink)
                         .frame(minWidth: 52)
                     stepButton(plus: true)
                 }
-                CBWideButton(title: "Set Stone", tone: CBTheme.slate,
+                SHWideButton(title: "Set Stone", tone: SHTheme.slate,
                              enabled: engine.phase == .placing && engine.preview?.supported == true
                                       && engine.preview?.onCrown == true) {
                     engine.commit(store: store)
@@ -460,14 +460,14 @@ struct CBPlayView: View {
     private func stepButton(plus: Bool) -> some View {
         Button(action: {
             engine.rotate(byDegrees: (plus ? 1 : -1) * Double(store.data.rotationStep))
-            CBHaptics.tap(store.data.haptics)
+            SHHaptics.tap(store.data.haptics)
         }) {
             ZStack {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(CBTheme.card)
+                    .fill(SHTheme.card)
                     .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(CBTheme.cardEdge, lineWidth: 1))
-                CBIconStep(size: 15, color: CBTheme.slate, plus: plus)
+                        .stroke(SHTheme.cardEdge, lineWidth: 1))
+                SHIconStep(size: 15, color: SHTheme.slate, plus: plus)
             }
             .frame(width: 34, height: 30)
             .contentShape(Rectangle())
@@ -476,12 +476,12 @@ struct CBPlayView: View {
         .disabled(engine.phase != .placing)
     }
 
-    private var ringSize: CGFloat { compact ? 66 : (CBSafe.isShort ? 74 : 84) }
+    private var ringSize: CGFloat { compact ? 66 : (SHSafe.isShort ? 74 : 84) }
 
     private var twistRing: some View {
         ZStack {
-            Circle().fill(CBTheme.card)
-            Circle().stroke(CBTheme.cardEdge, lineWidth: 1)
+            Circle().fill(SHTheme.card)
+            Circle().stroke(SHTheme.cardEdge, lineWidth: 1)
             Canvas { ctx, s in
                 let c = CGPoint(x: s.width / 2, y: s.height / 2)
                 let r = min(s.width, s.height) / 2 - 6
@@ -492,19 +492,19 @@ struct CBPlayView: View {
                     var p = Path()
                     p.move(to: CGPoint(x: c.x + CGFloat(cos(a)) * inner, y: c.y + CGFloat(sin(a)) * inner))
                     p.addLine(to: CGPoint(x: c.x + CGFloat(cos(a)) * r, y: c.y + CGFloat(sin(a)) * r))
-                    ctx.stroke(p, with: .color(CBTheme.inkFaint.opacity(long ? 0.9 : 0.5)), lineWidth: long ? 1.6 : 1)
+                    ctx.stroke(p, with: .color(SHTheme.inkFaint.opacity(long ? 0.9 : 0.5)), lineWidth: long ? 1.6 : 1)
                 }
                 let a = -Double(engine.holdRot) - Double.pi / 2
                 var needle = Path()
                 needle.move(to: c)
                 needle.addLine(to: CGPoint(x: c.x + CGFloat(cos(a)) * (r - 4), y: c.y + CGFloat(sin(a)) * (r - 4)))
-                ctx.stroke(needle, with: .color(ringActive ? CBTheme.seaglass : CBTheme.slate),
+                ctx.stroke(needle, with: .color(ringActive ? SHTheme.seaglass : SHTheme.slate),
                            style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
                 ctx.fill(Path(ellipseIn: CGRect(x: c.x - 4, y: c.y - 4, width: 8, height: 8)),
-                         with: .color(CBTheme.slate))
+                         with: .color(SHTheme.slate))
             }
             .padding(2)
-            CBIconTwist(size: ringSize * 0.30, color: CBTheme.inkFaint.opacity(0.55))
+            SHIconTwist(size: ringSize * 0.30, color: SHTheme.inkFaint.opacity(0.55))
                 .offset(y: ringSize * 0.26)
         }
         .frame(width: ringSize, height: ringSize)
@@ -531,7 +531,7 @@ struct CBPlayView: View {
                 }
                 .onEnded { _ in
                     ringActive = false
-                    CBHaptics.tap(store.data.haptics)
+                    SHHaptics.tap(store.data.haptics)
                 }
         )
     }
@@ -541,16 +541,16 @@ struct CBPlayView: View {
     private var nextStones: some View {
         VStack(spacing: 3) {
             Text("NEXT")
-                .font(CBTheme.label(8, .semibold))
+                .font(SHTheme.label(8, .semibold))
                 .tracking(1)
-                .foregroundColor(CBTheme.inkFaint)
+                .foregroundColor(SHTheme.inkFaint)
             ForEach(Array(engine.upcoming.prefix(compact ? 2 : 3).enumerated()), id: \.offset) { item in
-                CBStonePortrait(kindID: item.element, boxSize: CGSize(width: 40, height: 20))
+                SHStonePortrait(kindID: item.element, boxSize: CGSize(width: 40, height: 20))
             }
             if engine.upcoming.isEmpty {
                 Text("last")
-                    .font(CBTheme.label(9, .regular))
-                    .foregroundColor(CBTheme.inkFaint)
+                    .font(SHTheme.label(9, .regular))
+                    .foregroundColor(SHTheme.inkFaint)
             }
         }
         .frame(width: 44)
@@ -564,24 +564,24 @@ struct CBPlayView: View {
                 .onTapGesture { showPause = false }
             VStack(spacing: 12) {
                 Text("Paused")
-                    .font(CBTheme.displayBold(21))
-                    .foregroundColor(CBTheme.ink)
+                    .font(SHTheme.displayBold(21))
+                    .foregroundColor(SHTheme.ink)
                 Text(pauseStats)
-                    .font(CBTheme.label(12, .regular))
-                    .foregroundColor(CBTheme.inkSoft)
+                    .font(SHTheme.label(12, .regular))
+                    .foregroundColor(SHTheme.inkSoft)
                     .multilineTextAlignment(.center)
-                CBWideButton(title: "Resume") { showPause = false }
-                CBGhostButton(title: "Restart") {
+                SHWideButton(title: "Resume") { showPause = false }
+                SHGhostButton(title: "Restart") {
                     showPause = false
-                    onReplace(CBSession(mode: session.mode, trialID: session.trialID, dayKey: session.dayKey))
+                    onReplace(SHSession(mode: session.mode, trialID: session.trialID, dayKey: session.dayKey))
                 }
                 if session.mode == .zen || session.mode == .windward {
-                    CBGhostButton(title: "Finish Run Here", tone: CBTheme.moss) {
+                    SHGhostButton(title: "Finish Run Here", tone: SHTheme.moss) {
                         showPause = false
                         engine.endRunEarly(store: store)
                     }
                 }
-                CBGhostButton(title: "Leave", tone: CBTheme.rust) {
+                SHGhostButton(title: "Leave", tone: SHTheme.rust) {
                     engine.stop()
                     onExit()
                 }
@@ -593,51 +593,51 @@ struct CBPlayView: View {
     }
 
     private var pauseStats: String {
-        "\(engine.placed.count) stones seated  ·  \(CBFormat.height(engine.currentHeight)) pt tall"
+        "\(engine.placed.count) stones seated  ·  \(SHFormat.height(engine.currentHeight)) pt tall"
     }
 
     // MARK: - Result
 
-    private func resultOverlay(_ r: CBRunResult) -> some View {
+    private func resultOverlay(_ r: SHRunResult) -> some View {
         ZStack {
             Color.black.opacity(0.42).ignoresSafeArea()
             VStack(spacing: 11) {
                 Text(resultTitle(r))
-                    .font(CBTheme.displayBold(22))
-                    .foregroundColor(r.toppled ? CBTheme.rust : CBTheme.ink)
+                    .font(SHTheme.displayBold(22))
+                    .foregroundColor(r.toppled ? SHTheme.rust : SHTheme.ink)
                 Text(resultBlurb(r))
-                    .font(CBTheme.label(12, .regular))
-                    .foregroundColor(CBTheme.inkSoft)
+                    .font(SHTheme.label(12, .regular))
+                    .foregroundColor(SHTheme.inkSoft)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if session.mode == .trials {
-                    CBStarRow(earned: r.stars, size: 22)
+                    SHStarRow(earned: r.stars, size: 22)
                         .padding(.vertical, 2)
                 }
 
                 HStack(spacing: 0) {
                     resultStat("Stones", "\(r.stones)")
-                    Rectangle().fill(CBTheme.hairline).frame(width: 1, height: 26)
-                    resultStat("Height", CBFormat.height(r.height) + " pt")
-                    Rectangle().fill(CBTheme.hairline).frame(width: 1, height: 26)
-                    resultStat("Min margin", r.stones > 0 ? CBFormat.margin(r.minMargin) : "—")
+                    Rectangle().fill(SHTheme.hairline).frame(width: 1, height: 26)
+                    resultStat("Height", SHFormat.height(r.height) + " pt")
+                    Rectangle().fill(SHTheme.hairline).frame(width: 1, height: 26)
+                    resultStat("Min margin", r.stones > 0 ? SHFormat.margin(r.minMargin) : "—")
                 }
                 .padding(.vertical, 4)
 
                 if r.newRecord {
-                    CBPill(text: "New personal best", color: CBTheme.moss)
+                    SHPill(text: "New personal best", color: SHTheme.moss)
                 }
 
-                CBWideButton(title: "Try Again") {
-                    onReplace(CBSession(mode: session.mode, trialID: session.trialID, dayKey: session.dayKey))
+                SHWideButton(title: "Try Again") {
+                    onReplace(SHSession(mode: session.mode, trialID: session.trialID, dayKey: session.dayKey))
                 }
-                if session.mode == .trials, let t = trial, let next = CBTrialData.trial(t.id + 1), r.passed {
-                    CBGhostButton(title: "Next: \(next.name)", tone: CBTheme.seaglass) {
-                        onReplace(CBSession(mode: .trials, trialID: next.id))
+                if session.mode == .trials, let t = trial, let next = SHTrialData.trial(t.id + 1), r.passed {
+                    SHGhostButton(title: "Next: \(next.name)", tone: SHTheme.seaglass) {
+                        onReplace(SHSession(mode: .trials, trialID: next.id))
                     }
                 }
-                CBGhostButton(title: "Back to Modes", tone: CBTheme.slate) {
+                SHGhostButton(title: "Back to Modes", tone: SHTheme.slate) {
                     engine.stop()
                     onExit()
                 }
@@ -651,16 +651,16 @@ struct CBPlayView: View {
     private func resultStat(_ label: String, _ value: String) -> some View {
         VStack(spacing: 2) {
             Text(value)
-                .font(CBTheme.monoBold(14))
-                .foregroundColor(CBTheme.ink)
+                .font(SHTheme.monoBold(14))
+                .foregroundColor(SHTheme.ink)
             Text(label)
-                .font(CBTheme.label(9, .medium))
-                .foregroundColor(CBTheme.inkFaint)
+                .font(SHTheme.label(9, .medium))
+                .foregroundColor(SHTheme.inkFaint)
         }
         .frame(maxWidth: .infinity)
     }
 
-    private func resultTitle(_ r: CBRunResult) -> String {
+    private func resultTitle(_ r: SHRunResult) -> String {
         if r.toppled { return "The Cairn Went" }
         switch session.mode {
         case .trials: return r.passed ? "Trial Complete" : "Not Quite"
@@ -669,7 +669,7 @@ struct CBPlayView: View {
         }
     }
 
-    private func resultBlurb(_ r: CBRunResult) -> String {
+    private func resultBlurb(_ r: SHRunResult) -> String {
         if r.toppled {
             let lvl = (r.failedLevel ?? 0) + 1
             return "Torque won at level \(lvl). The combined centre of mass above that contact left its support interval."

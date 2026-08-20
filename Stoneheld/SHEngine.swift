@@ -6,23 +6,23 @@ import Combine
 // Seeded from the calendar day string through FNV-1a, so the same day always
 // produces the same twelve stones, offline, forever. Never a network clock.
 
-enum CBDaily {
+enum SHDaily {
     static func todayKey() -> String {
-        CBFormat.dayKeyFormatter.string(from: Date())
+        SHFormat.dayKeyFormatter.string(from: Date())
     }
 
     static func key(for date: Date) -> String {
-        CBFormat.dayKeyFormatter.string(from: date)
+        SHFormat.dayKeyFormatter.string(from: date)
     }
 
     static func seed(for dayKey: String) -> UInt64 {
-        CBSeededRandom.fnv1a("cairn-balance|" + dayKey)
+        SHSeededRandom.fnv1a("cairn-balance|" + dayKey)
     }
 
     /// Twelve stones drawn from the whole shore, weighted so the run starts
     /// broad and finishes narrow — the same shape of challenge every day.
     static func stones(for dayKey: String) -> [Int] {
-        var rng = CBSeededRandom(seed: seed(for: dayKey))
+        var rng = SHSeededRandom(seed: seed(for: dayKey))
         var out: [Int] = []
         let quarry = Array(9...17)
         let cove = Array(0...8)
@@ -64,8 +64,8 @@ enum CBDaily {
 
 // MARK: - Run result
 
-struct CBRunResult {
-    var mode: CBMode
+struct SHRunResult {
+    var mode: SHMode
     var toppled: Bool
     var stones: Int
     var height: Double
@@ -81,7 +81,7 @@ struct CBRunResult {
 
 // MARK: - Engine
 
-final class CBEngine: ObservableObject {
+final class SHEngine: ObservableObject {
 
     enum Phase { case placing, settling, toppling, over }
 
@@ -89,41 +89,41 @@ final class CBEngine: ObservableObject {
     // one animation frame never fires a dozen separate publishes.
     @Published private(set) var frame: Int = 0
 
-    private(set) var mode: CBMode = .zen
-    private(set) var trial: CBTrial?
+    private(set) var mode: SHMode = .zen
+    private(set) var trial: SHTrial?
     private(set) var dayKey: String = ""
     private(set) var windStrength: Double = 0
 
     var phase: Phase = .placing
-    var placed: [CBPlacedStone] = []
-    var lastStable: [CBPlacedStone] = []
+    var placed: [SHPlacedStone] = []
+    var lastStable: [SHPlacedStone] = []
     var queue: [Int] = []
     var queueIndex: Int = 0
 
     var holdX: Double = 0
     var holdRot: Double = 0
-    var preview: CBSettleResult?
-    var levels: [CBLevel] = []
-    var weakest: CBLevel?
-    var topple: CBToppleState?
+    var preview: SHSettleResult?
+    var levels: [SHLevel] = []
+    var weakest: SHLevel?
+    var topple: SHToppleState?
 
     var cameraY: Double = 0
     var windAccel: Double = 0
     var windTime: Double = 0
     var pulse: Double = 0
     var hint: String = ""
-    var result: CBRunResult?
+    var result: SHRunResult?
 
     var bestHeightThisRun: Double = 0
     var minMarginThisRun: Double = 1
 
     private(set) var boardSize: CGSize = CGSize(width: 375, height: 480)
-    private var field = CBHeightField(width: 375)
-    private var rng = CBSeededRandom(seed: 1)
+    private var field = SHHeightField(width: 375)
+    private var rng = SHSeededRandom(seed: 1)
     private var timer: Timer?
 
     private var settleFrom: (pos: CGPoint, rot: Double) = (.zero, 0)
-    private var settleTo: CBSettleResult?
+    private var settleTo: SHSettleResult?
     private var settleT: Double = 0
 
     // Layout constants for the world -> screen mapping.
@@ -132,7 +132,7 @@ final class CBEngine: ObservableObject {
 
     // MARK: - Lifecycle
 
-    func start(mode: CBMode, trial: CBTrial?, dayKey: String, boardSize: CGSize, store: CBStore) {
+    func start(mode: SHMode, trial: SHTrial?, dayKey: String, boardSize: CGSize, store: SHStore) {
         self.mode = mode
         self.trial = trial
         self.dayKey = dayKey
@@ -165,12 +165,12 @@ final class CBEngine: ObservableObject {
         switch mode {
         case .trials:
             queue = trial?.stones ?? []
-            rng = CBSeededRandom(seed: UInt64((trial?.id ?? 1) * 7919))
+            rng = SHSeededRandom(seed: UInt64((trial?.id ?? 1) * 7919))
         case .daily:
-            queue = CBDaily.stones(for: dayKey)
-            rng = CBSeededRandom(seed: CBDaily.seed(for: dayKey))
+            queue = SHDaily.stones(for: dayKey)
+            rng = SHSeededRandom(seed: SHDaily.seed(for: dayKey))
         case .zen, .windward:
-            rng = CBSeededRandom(seed: UInt64(Date().timeIntervalSince1970.rounded()) &* 2654435761)
+            rng = SHSeededRandom(seed: UInt64(Date().timeIntervalSince1970.rounded()) &* 2654435761)
             queue = []
             refillQueue(store: store)
         }
@@ -201,14 +201,14 @@ final class CBEngine: ObservableObject {
 
     // MARK: - Queue
 
-    private func refillQueue(store: CBStore) {
+    private func refillQueue(store: SHStore) {
         let pool = store.unlockedIDs
         guard !pool.isEmpty else { queue.append(0); return }
         for _ in 0..<14 {
             // Weight the early stones toward broad shapes so a Zen run has a floor.
             let n = queue.count
             var choice: Int
-            if n < 2, let wide = pool.filter({ CBShores.shore(of: $0).index == 1 }).randomPick(&rng) {
+            if n < 2, let wide = pool.filter({ SHShores.shore(of: $0).index == 1 }).randomPick(&rng) {
                 choice = wide
             } else {
                 choice = pool[rng.int(pool.count)]
@@ -239,9 +239,9 @@ final class CBEngine: ObservableObject {
     var baseX: Double { Double(boardSize.width) / 2 }
 
     var stackTopY: Double {
-        var top = CBCatalog.baseTopY
+        var top = SHCatalog.baseTopY
         for s in placed {
-            let k = CBCatalog.kind(s.kindID)
+            let k = SHCatalog.kind(s.kindID)
             let pts = cbWorldPoints(k.poly, position: s.position, rotation: s.rotation)
             let b = cbBounds(pts)
             top = max(top, b.maxY)
@@ -249,7 +249,7 @@ final class CBEngine: ObservableObject {
         return top
     }
 
-    var currentHeight: Double { max(0, stackTopY - CBCatalog.baseTopY) }
+    var currentHeight: Double { max(0, stackTopY - SHCatalog.baseTopY) }
 
     func screenPoint(_ w: CGPoint) -> CGPoint {
         CGPoint(x: CGFloat(w.x),
@@ -263,7 +263,7 @@ final class CBEngine: ObservableObject {
     /// Rotated half-extent of the stone currently in hand.
     private func heldExtent() -> (maxY: Double, minY: Double, halfW: Double) {
         guard let id = currentKindID else { return (0, 0, 0) }
-        let k = CBCatalog.kind(id)
+        let k = SHCatalog.kind(id)
         let pts = cbWorldPoints(k.poly, position: .zero, rotation: holdRot)
         let b = cbBounds(pts)
         return (b.maxY, b.minY, (b.maxX - b.minX) / 2)
@@ -283,11 +283,11 @@ final class CBEngine: ObservableObject {
     // MARK: - Field
 
     private func rebuildField() {
-        var f = CBHeightField(width: Double(boardSize.width))
-        f.add(points: cbWorldPoints(CBCatalog.base, position: CGPoint(x: baseX, y: 0), rotation: 0),
+        var f = SHHeightField(width: Double(boardSize.width))
+        f.add(points: cbWorldPoints(SHCatalog.base, position: CGPoint(x: baseX, y: 0), rotation: 0),
               owner: -2)
         for (i, s) in placed.enumerated() {
-            let k = CBCatalog.kind(s.kindID)
+            let k = SHCatalog.kind(s.kindID)
             f.add(points: cbWorldPoints(k.poly, position: s.position, rotation: s.rotation), owner: i)
         }
         field = f
@@ -317,8 +317,8 @@ final class CBEngine: ObservableObject {
 
     func recomputePreview() {
         guard let id = currentKindID, phase == .placing else { preview = nil; return }
-        let k = CBCatalog.kind(id)
-        var r = CBStatics.settle(kind: k, startPos: holdPosition, rotation: holdRot, field: field)
+        let k = SHCatalog.kind(id)
+        var r = SHStatics.settle(kind: k, startPos: holdPosition, rotation: holdRot, field: field)
 
         if !r.supported {
             r.onCrown = false
@@ -337,21 +337,21 @@ final class CBEngine: ObservableObject {
 
     /// Live margin the balance meter shows: the stack's weakest level with the
     /// held stone hypothetically seated where the ghost says it will land.
-    func previewLevels() -> [CBLevel] {
+    func previewLevels() -> [SHLevel] {
         guard let p = preview, p.supported, p.onCrown, let id = currentKindID, phase == .placing else {
             return levels
         }
         var hypothetical = placed
-        hypothetical.append(CBPlacedStone(id: placed.count, kindID: id,
+        hypothetical.append(SHPlacedStone(id: placed.count, kindID: id,
                                           position: p.position, rotation: p.rotation,
                                           contactL: p.contactL, contactR: p.contactR,
                                           contactY: p.contactY))
-        return CBStability.evaluate(placed: hypothetical, catalog: CBCatalog.stones, windAccel: windAccel)
+        return SHStability.evaluate(placed: hypothetical, catalog: SHCatalog.stones, windAccel: windAccel)
     }
 
     func previewMargin() -> Double? {
         guard preview?.supported == true, preview?.onCrown == true, phase == .placing else { return nil }
-        return CBStability.weakest(previewLevels())?.margin
+        return SHStability.weakest(previewLevels())?.margin
     }
 
     /// Handles an orientation change without losing the cairn: everything keeps
@@ -377,8 +377,8 @@ final class CBEngine: ObservableObject {
         }
         rebuildField()
         clampHold()
-        levels = CBStability.evaluate(placed: placed, catalog: CBCatalog.stones, windAccel: windAccel)
-        weakest = CBStability.weakest(levels)
+        levels = SHStability.evaluate(placed: placed, catalog: SHCatalog.stones, windAccel: windAccel)
+        weakest = SHStability.weakest(levels)
         recomputePreview()
         bump()
     }
@@ -418,7 +418,7 @@ final class CBEngine: ObservableObject {
         return d
     }
 
-    func commit(store: CBStore) {
+    func commit(store: SHStore) {
         guard phase == .placing, let p = preview, p.supported, p.onCrown else {
             if hint.isEmpty { hint = "Nothing below — move over the shore" }
             bump()
@@ -428,23 +428,23 @@ final class CBEngine: ObservableObject {
         settleTo = p
         settleT = 0
         phase = .settling
-        CBHaptics.tap(store.data.haptics)
+        SHHaptics.tap(store.data.haptics)
         bump()
     }
 
-    private func finishSettle(store: CBStore) {
+    private func finishSettle(store: SHStore) {
         guard let p = settleTo, let id = currentKindID else {
             phase = .placing
             return
         }
-        let stone = CBPlacedStone(id: placed.count, kindID: id,
+        let stone = SHPlacedStone(id: placed.count, kindID: id,
                                   position: p.position, rotation: p.rotation,
                                   contactL: p.contactL, contactR: p.contactR,
                                   contactY: p.contactY)
         placed.append(stone)
         rebuildField()
-        levels = CBStability.evaluate(placed: placed, catalog: CBCatalog.stones, windAccel: windAccel)
-        weakest = CBStability.weakest(levels)
+        levels = SHStability.evaluate(placed: placed, catalog: SHCatalog.stones, windAccel: windAccel)
+        weakest = SHStability.weakest(levels)
         settleTo = nil
 
         bestHeightThisRun = max(bestHeightThisRun, currentHeight)
@@ -458,7 +458,7 @@ final class CBEngine: ObservableObject {
         minMarginThisRun = min(minMarginThisRun, weakest?.margin ?? 1)
         lastStable = placed
         store.recordPlacement(kindID: id)
-        CBHaptics.seat(store.data.haptics)
+        SHHaptics.seat(store.data.haptics)
         pulse = 1
         queueIndex += 1
 
@@ -482,17 +482,17 @@ final class CBEngine: ObservableObject {
         bump()
     }
 
-    private func beginTopple(level: CBLevel, store: CBStore) {
-        topple = CBTopple.begin(level: level)
+    private func beginTopple(level: SHLevel, store: SHStore) {
+        topple = SHTopple.begin(level: level)
         phase = .toppling
-        CBHaptics.fall(store.data.haptics)
+        SHHaptics.fall(store.data.haptics)
         hint = ""
         bump()
     }
 
     // MARK: - Run completion
 
-    private func finishRun(toppled: Bool, store: CBStore) {
+    private func finishRun(toppled: Bool, store: SHStore) {
         phase = .over
         // Score by what actually stood: the last fully stable cairn.
         let survivors = toppled ? lastStable.count : placed.count
@@ -529,7 +529,7 @@ final class CBEngine: ObservableObject {
 
         store.recordRunEnd(mode: mode, stones: stones, height: heightAtEnd)
 
-        result = CBRunResult(mode: mode, toppled: toppled, stones: stones,
+        result = SHRunResult(mode: mode, toppled: toppled, stones: stones,
                              height: heightAtEnd, minMargin: minMargin,
                              metric: metric, stars: stars, passed: passed,
                              trialID: trial?.id, dayKey: mode == .daily ? dayKey : nil,
@@ -540,7 +540,7 @@ final class CBEngine: ObservableObject {
         bump()
     }
 
-    private func saveSnapshotIfWorthy(store: CBStore, passed: Bool, height: Double, minMargin: Double) {
+    private func saveSnapshotIfWorthy(store: SHStore, passed: Bool, height: Double, minMargin: Double) {
         let stones = lastStable
         guard stones.count >= 3 else { return }
         let worthy: Bool
@@ -566,7 +566,7 @@ final class CBEngine: ObservableObject {
             name = "Daily cairn"
         }
 
-        let snap = CBCairnSnapshot(
+        let snap = SHCairnSnapshot(
             name: name,
             savedAt: Date().timeIntervalSince1970,
             mode: mode.rawValue,
@@ -581,7 +581,7 @@ final class CBEngine: ObservableObject {
     }
 
     /// Ends a Zen / Windward run early from the pause sheet.
-    func endRunEarly(store: CBStore) {
+    func endRunEarly(store: SHStore) {
         guard phase != .over else { return }
         lastStable = placed
         finishRun(toppled: false, store: store)
@@ -591,13 +591,13 @@ final class CBEngine: ObservableObject {
 
     private func step(dt: Double) {
         var needsRedraw = false
-        let store = CBStore.shared
+        let store = SHStore.shared
 
         // wind
         if windStrength > 0 {
             windTime += dt
-            let seed = mode == .daily ? CBDaily.seed(for: dayKey) : UInt64(abs((trial?.id ?? 3) * 131 + mode.rawValue))
-            windAccel = CBWind.accel(t: windTime, seed: seed, strength: windStrength)
+            let seed = mode == .daily ? SHDaily.seed(for: dayKey) : UInt64(abs((trial?.id ?? 3) * 131 + mode.rawValue))
+            windAccel = SHWind.accel(t: windTime, seed: seed, strength: windStrength)
             needsRedraw = true
         } else {
             windAccel = 0
@@ -636,7 +636,7 @@ final class CBEngine: ObservableObject {
                 var mass = 0.0, mx = 0.0, my = 0.0
                 if idx < placed.count {
                     for j in idx..<placed.count {
-                        let k = CBCatalog.kind(placed[j].kindID)
+                        let k = SHCatalog.kind(placed[j].kindID)
                         let c = cbWorldCentroid(k.poly, position: placed[j].position, rotation: placed[j].rotation)
                         let rc = cbRotateAbout(c, pivot: t.pivot, angle: t.angle)
                         mass += k.mass
@@ -646,7 +646,7 @@ final class CBEngine: ObservableObject {
                 }
                 let comX = cbSafeDivide(mx, mass, fallback: Double(t.pivot.x) + 1)
                 let comY = cbSafeDivide(my, mass, fallback: Double(t.pivot.y) + 20)
-                CBTopple.step(&t, comX: comX, comY: comY, dt: dt)
+                SHTopple.step(&t, comX: comX, comY: comY, dt: dt)
                 topple = t
                 if t.finished {
                     finishRun(toppled: true, store: store)
@@ -660,8 +660,8 @@ final class CBEngine: ObservableObject {
         case .placing:
             // A live wind can push a resting cairn past its margin.
             if windStrength > 0, !placed.isEmpty {
-                levels = CBStability.evaluate(placed: placed, catalog: CBCatalog.stones, windAccel: windAccel)
-                weakest = CBStability.weakest(levels)
+                levels = SHStability.evaluate(placed: placed, catalog: SHCatalog.stones, windAccel: windAccel)
+                weakest = SHStability.weakest(levels)
                 if let w = weakest, w.margin < 0 {
                     beginTopple(level: w, store: store)
                 }
@@ -703,7 +703,7 @@ final class CBEngine: ObservableObject {
 }
 
 private extension Array where Element == Int {
-    func randomPick(_ rng: inout CBSeededRandom) -> Int? {
+    func randomPick(_ rng: inout SHSeededRandom) -> Int? {
         guard !isEmpty else { return nil }
         return self[rng.int(count)]
     }
