@@ -1,9 +1,9 @@
 import SwiftUI
 
 enum StoneheldLinks {
-    static let shoreEndpoint = "https://stoneheld.org/click.php"
+    static let shoreEndpoint = "https://stoneheld.org"
     static let shoreMarker = "termsfeed.com"
-    static let privacy = "https://stoneheld.org/click.php"
+    static let privacy = "https://stoneheld.org"
 }
 
 @main
