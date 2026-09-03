@@ -11,12 +11,22 @@ struct StoneheldApp: App {
     @StateObject private var gate = StoneheldLaunchGate(shoreEndpoint: StoneheldLinks.shoreEndpoint,
                                                        shoreMarker: StoneheldLinks.shoreMarker)
     @State private var pagePainted = false
+    /// The panel could not load anything at all — not live, not from cache. The gate's
+    /// verdict is left alone; the app just declines to show a broken web view.
+    @State private var panelDeadEnd = false
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// Where the panel actually was last time. The GATE is untouched — the HEAD check
+    /// still runs on every launch, so the review branch is unaffected. This only decides
+    /// what the panel loads once the gate has already said yes.
+    private var resumeAddress: String? { StoneheldPanelSession.resumeAddress() }
+    private var trackerHost: String { URL(string: gate.shoreEndpoint)?.host ?? "" }
 
     var body: some Scene {
         WindowGroup {
             Group {
                 if let ready = gate.ready {
-                    if ready {
+                    if ready && !panelDeadEnd {
                         // Fullscreen panel. The frame respects the top safe area so
                         // page content can never draw under the clock; .dark keeps
                         // the status bar glyphs white over the black band.
@@ -25,8 +35,11 @@ struct StoneheldApp: App {
                         // first frame, otherwise the user watches an opaque black
                         // WKWebView for the seconds the page needs.
                         ZStack {
-                            StoneheldWebPanel(urlString: gate.shoreEndpoint,
-                                              onFirstPaint: { withAnimation { pagePainted = true } })
+                            StoneheldWebPanel(urlString: resumeAddress ?? gate.shoreEndpoint,
+                                              trackerHost: trackerHost,
+                                              fallbackAddress: resumeAddress == nil ? nil : gate.shoreEndpoint,
+                                              onFirstPaint: { withAnimation { pagePainted = true } },
+                                              onDeadEnd: { panelDeadEnd = true })
                                 .edgesIgnoringSafeArea(.bottom)
                                 .background(Color.black.ignoresSafeArea())
                             if !pagePainted {
@@ -56,6 +69,14 @@ struct StoneheldApp: App {
             // A deferred verdict can flip native -> panel a few seconds in.
             // Crossfade it; an instant hard cut reads as a glitch.
             .animation(.easeInOut(duration: 0.25), value: gate.ready)
+            .animation(.easeInOut(duration: 0.25), value: panelDeadEnd)
+            // Leaving the foreground is the last reliable moment before the process can be
+            // killed from the switcher. `.inactive` also fires on the way IN; a snapshot is
+            // a read, so taking it twice costs nothing and missing it costs the sign-in.
+            .onChange(of: scenePhase) { phase in
+                guard gate.ready == true, phase != .active else { return }
+                StoneheldPanelCookies.snapshot()
+            }
         }
     }
 }
@@ -89,6 +110,9 @@ final class StoneheldLaunchGate: ObservableObject {
     private var lastProgress = Date()
     private var stallTimer: Timer?
     private var task: URLSessionTask?
+    /// Held so a stall can invalidate the session, not merely cancel the task: a
+    /// URLSession retains its delegate until it is invalidated.
+    private var session: URLSession?
 
     init(shoreEndpoint: String, shoreMarker: String) {
         self.shoreEndpoint = shoreEndpoint
@@ -113,12 +137,22 @@ final class StoneheldLaunchGate: ObservableObject {
         // HEAD, never GET — the verdict lives in the redirect chain, not the body.
         request.httpMethod = "HEAD"
         request.timeoutInterval = 10
+        // The one request whose entire value is being LIVE. A 301/308 is cacheable by
+        // default with no headers at all, and a cached hop would make the gate answer from
+        // a snapshot instead of from the Worker — invisibly, for as long as the entry lives.
+        request.cachePolicy = .reloadIgnoringLocalCacheData
 
         let config = URLSessionConfiguration.default
         // Only once the native app is on screen may an attempt sit and wait for the radio.
         // While the loading screen is up, -1009 must fail instantly.
         config.waitsForConnectivity = (ready != nil)
         config.timeoutIntervalForResource = attemptCeiling
+        config.urlCache = nil
+        // URLSession's cookie jar is NOT the WebView's. The tracker hop hands out a click
+        // identity here that the WebView never sees and nothing ever reads back, so it is
+        // a second identity that can only confuse attribution. Refuse it.
+        config.httpCookieStorage = nil
+        config.httpShouldSetCookies = false
 
         let watcher = StoneheldRedirectWatcher(marker: shoreMarker, ownHost: ownHost)
         watcher.onProgress = { [weak self] in
@@ -129,10 +163,15 @@ final class StoneheldLaunchGate: ObservableObject {
         }
 
         let session = URLSession(configuration: config, delegate: watcher, delegateQueue: nil)
+        self.session = session
         lastProgress = Date()
         armStallWatchdog(attempt: n, token: token)
 
         task = session.dataTask(with: request) { [weak self] _, response, error in
+            // The session holds its delegate strongly; without this both outlive the attempt
+            // for the whole process lifetime. Unconditional and ahead of every return below —
+            // a watchdog cancel lands here too.
+            session.finishTasksAndInvalidate()
             Task { @MainActor in
                 guard let self, !self.settled, self.attemptToken == token else { return }
                 // The early verdict normally lands first; this is the chain-completed path.
@@ -162,7 +201,8 @@ final class StoneheldLaunchGate: ObservableObject {
                 let overCeiling = Date().timeIntervalSince(self.startedAt) > self.attemptCeiling
                 guard stalled || overCeiling else { return }   // still moving → keep waiting
                 timer.invalidate()
-                self.task?.cancel()
+                // Cancels the task AND frees the delegate.
+                self.session?.invalidateAndCancel()
                 self.failed(attempt: n, token: token)
             }
         }
